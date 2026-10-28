@@ -1,0 +1,22 @@
+# 依存関係
+node_modules/
+
+# ビルド成果物
+dist/
+
+# テスト
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# エディタ / OS
+.DS_Store
+*.local
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# ログ
+npm-debug.log*
+*.log
