@@ -1,0 +1,120 @@
+/* ============================================================
+   Components — ボタン・カード・チップなど再利用UI
+   ============================================================ */
+
+/* ---- ボタン（最小タップ領域 44px を保証） ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-min);
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-350);
+  letter-spacing: 0.18em;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+/* 一次ボタン: 金の細線 + 透明 */
+.btn--gold {
+  border: 1px solid var(--gold);
+  color: var(--gold-bright);
+  background: rgba(201, 169, 106, 0.06);
+}
+
+.btn--gold:hover {
+  background: rgba(201, 169, 106, 0.14);
+  box-shadow: 0 0 24px rgba(201, 169, 106, 0.22);
+}
+
+/* 二次ボタン: 線なし・控えめ */
+.btn--ghost {
+  border: 1px solid var(--line-gold);
+  color: var(--ivory-soft);
+}
+
+.btn--ghost:hover {
+  color: var(--ivory);
+  border-color: var(--gold-dim);
+}
+
+/* ---- カード: ガラス質の薄いパネル ---- */
+.card {
+  background: var(--panel-bg);
+  border: var(--hairline);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: var(--blur-panel);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.card--interactive:hover {
+  background: var(--panel-bg-hover);
+  transform: translateY(-2px);
+}
+
+/* ---- チップ ---- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 26px;
+  padding: 2px var(--space-3);
+  border: 1px solid var(--line-gold);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-300);
+  letter-spacing: var(--ls-wide);
+  color: var(--gold-bright);
+  background: rgba(201, 169, 106, 0.05);
+}
+
+/* ---- 区切り線 ---- */
+.hairline-divider {
+  height: 1px;
+  border: none;
+  margin: var(--space-8) auto;
+  width: min(160px, 40%);
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+
+/* ---- セクション見出しブロック ---- */
+.section-head {
+  display: grid;
+  gap: var(--space-4);
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.section-head__title {
+  font-family: var(--font-mincho);
+  font-weight: 500;
+  font-size: var(--fs-600);
+  letter-spacing: 0.14em;
+  color: var(--ivory);
+}
+
+.section-head__lead {
+  color: var(--ivory-soft);
+  font-size: var(--fs-350);
+}
+
+/* ---- テキスト階層 ---- */
+.text-lead {
+  font-family: var(--font-mincho);
+  font-size: var(--fs-450);
+  line-height: 2;
+  color: var(--ivory-soft);
+}
+
+.text-caption {
+  font-size: var(--fs-300);
+  color: var(--ivory-faint);
+  letter-spacing: var(--ls-wide);
+}

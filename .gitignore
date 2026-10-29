@@ -6,6 +6,10 @@ dist/
 
 # テスト
 test-results/
+# デザイン確認用スクリーンショット
+screenshots/
+
+
 playwright-report/
 blob-report/
 playwright/.cache/

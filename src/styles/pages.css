@@ -1,0 +1,94 @@
+/* ============================================================
+   Pages — ページ固有のスタイル（現段階: デザインプレビュー）
+   ============================================================ */
+
+.preview {
+  padding: var(--space-9) 0 var(--space-9);
+}
+
+.preview__hero {
+  text-align: center;
+  display: grid;
+  gap: var(--space-5);
+  justify-items: center;
+  margin-bottom: var(--space-9);
+}
+
+.preview__title {
+  font-size: var(--fs-900);
+}
+
+.preview__lead {
+  max-width: 34em;
+}
+
+/* プレビュー各セクション */
+.preview__section {
+  display: grid;
+  gap: var(--space-5);
+  margin-bottom: var(--space-9);
+}
+
+.preview__section-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-600);
+  color: var(--gold-bright);
+  letter-spacing: 0.12em;
+  border-bottom: var(--hairline);
+  padding-bottom: var(--space-3);
+}
+
+/* タイポグラフィ見本 */
+.type-sample {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.type-sample__label {
+  color: var(--ivory-faint);
+  font-size: var(--fs-300);
+  letter-spacing: var(--ls-latin);
+  text-transform: uppercase;
+}
+
+.type-sample h1 {
+  font-size: var(--fs-900);
+}
+
+.type-sample h2 {
+  font-size: var(--fs-750);
+}
+
+/* PC: 2カラムで余白を活かす */
+@media (min-width: 900px) {
+  .preview {
+    padding: var(--space-9) 0;
+  }
+
+  .preview__grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-7);
+    align-items: start;
+  }
+}
+
+/* スペーススケールの見本 */
+.space-scale {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.space-scale__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--fs-300);
+  color: var(--ivory-faint);
+}
+
+.space-scale__bar {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--gold-dim), transparent);
+}
