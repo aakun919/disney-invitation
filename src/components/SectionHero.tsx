@@ -3,6 +3,7 @@ interface SectionHeroProps {
   lead?: string;
   latinLabel?: string;
   parkName?: string;
+  dateText?: string;
 }
 
 const DEFAULT_LATIN_MAP: Record<string, string> = {
@@ -16,6 +17,7 @@ export default function SectionHero({
   lead,
   latinLabel,
   parkName,
+  dateText,
 }: SectionHeroProps) {
   const displayLatin = latinLabel || DEFAULT_LATIN_MAP[title] || "";
 
@@ -33,6 +35,10 @@ export default function SectionHero({
         <h2 className="section-hero__title font-display gold-text">
           {title}
         </h2>
+
+        {dateText && (
+          <p className="section-hero__date">{dateText}</p>
+        )}
 
         {parkName && (
           <p className="section-hero__park">{parkName}</p>

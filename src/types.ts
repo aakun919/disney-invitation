@@ -1,4 +1,4 @@
-export type DataStatus = "sample" | "confirmed";
+export type DataStatus = "sample" | "tentative" | "confirmed";
 
 export type CategoryId =
   | "moment"
@@ -25,6 +25,12 @@ export interface ScheduleItem {
   location?: string;
   duration?: string;
   tips?: string[];
+  /**
+   * 情報の確定度。
+   * - sample: 制作段階の仮データ（本番前に実データへ差し替え必須）
+   * - tentative: 実情報だが未確定・調整中（画面に「調整中」と表示される）
+   * - confirmed: 確定情報（画面に「確定」と表示される）
+   */
   status: DataStatus;
 }
 
@@ -32,6 +38,8 @@ export interface DayPlan {
   id: string;
   /** [REPLACE] 実日程に置き換えること（check:content --strict が sample を検出します） */
   dateLabel: string;
+  /** 表示用の日付（例: "2027年3月13日（土）"）。未設定なら表示しない */
+  dateText?: string;
   parkName: string;
   parkLatin: string;
   intro: string;

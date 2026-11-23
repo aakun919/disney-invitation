@@ -307,3 +307,177 @@
     color: #8c733e !important;
   }
 }
+
+/* ============================================================
+   2026-11-23 改善（Muse）: イントロダクション / 日付表示 /
+   ステータスチップ / カードアクションの1行化
+   ============================================================ */
+
+/* ---- イントロダクション ---- */
+.intro {
+  padding: var(--space-9) 0 var(--space-7);
+  text-align: center;
+}
+
+.intro__inner {
+  max-width: var(--container);
+  margin: 0 auto;
+}
+
+.intro__title {
+  font-size: var(--fs-900);
+  line-height: var(--lh-tight);
+  margin: var(--space-5) 0 var(--space-5);
+}
+
+.intro__lead {
+  color: var(--ivory-soft);
+  font-size: var(--fs-450);
+  line-height: var(--lh-body);
+  letter-spacing: var(--ls-body);
+  max-width: 34em;
+  margin: 0 auto;
+}
+
+.intro__countdown {
+  margin-top: var(--space-6);
+  color: var(--gold-bright);
+  font-size: var(--fs-400);
+  letter-spacing: var(--ls-wide);
+}
+
+.intro__countdown-num {
+  font-family: var(--font-display);
+  font-size: var(--fs-600);
+  margin: 0 0.15em;
+}
+
+.intro__facts {
+  margin: var(--space-7) auto 0;
+  max-width: 480px;
+  border-top: var(--hairline);
+  text-align: left;
+}
+
+.intro__fact {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-2);
+  border-bottom: 1px solid rgba(201, 169, 106, 0.14);
+}
+
+.intro__fact-term {
+  flex: none;
+  width: 4.5em;
+  color: var(--gold);
+  font-size: var(--fs-350);
+  letter-spacing: var(--ls-wide);
+}
+
+.intro__fact-value {
+  color: var(--ivory);
+  font-size: var(--fs-400);
+  margin: 0;
+}
+
+.intro__overview {
+  list-style: none;
+  margin: var(--space-7) auto 0;
+  padding: 0;
+  max-width: 480px;
+  text-align: left;
+}
+
+.intro__overview-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-2);
+}
+
+.intro__overview-date {
+  flex: none;
+  width: 5.2em;
+  font-family: var(--font-display);
+  color: var(--gold-bright);
+  font-size: var(--fs-450);
+  letter-spacing: 0.06em;
+}
+
+.intro__overview-weekday {
+  display: block;
+  font-size: var(--fs-300);
+  color: var(--ivory-faint);
+  letter-spacing: var(--ls-latin);
+}
+
+.intro__overview-text {
+  color: var(--ivory-soft);
+  font-size: var(--fs-400);
+  line-height: var(--lh-body);
+}
+
+.intro__note {
+  margin-top: var(--space-6);
+  color: var(--ivory-faint);
+  font-size: var(--fs-350);
+  letter-spacing: var(--ls-body);
+}
+
+/* ---- セクションヒーローの日付 ---- */
+.section-hero__date {
+  margin-top: var(--space-3);
+  color: var(--ivory-soft);
+  font-size: var(--fs-400);
+  letter-spacing: var(--ls-wide);
+}
+
+/* ---- タイムラインのチップ行とステータス ---- */
+.timeline__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.chip--status-tentative {
+  border-color: rgba(245, 240, 230, 0.35);
+  color: var(--ivory-soft);
+  background: rgba(245, 240, 230, 0.06);
+}
+
+.chip--status-confirmed {
+  border-color: var(--gold-bright);
+  color: #0a1128;
+  background: var(--gold-bright);
+  font-weight: 500;
+}
+
+/* ---- カードのアクションは1行に（チェック左／お気に入り右） ---- */
+.timeline__actions {
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+/* 印刷時はイントロの装飾を抑える */
+@media print {
+  .intro {
+    padding: var(--space-5) 0 !important;
+  }
+
+  .intro__countdown {
+    color: #8c733e !important;
+  }
+
+  .intro__fact-term,
+  .intro__overview-date {
+    color: #8c733e !important;
+  }
+
+  .intro__fact-value,
+  .intro__overview-text,
+  .intro__lead {
+    color: #111827 !important;
+  }
+}

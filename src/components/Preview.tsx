@@ -3,6 +3,7 @@ import { DAY1 } from "../data/day1";
 import { NIGHT } from "../data/night";
 import { DAY2 } from "../data/day2";
 import SectionHero from "./SectionHero";
+import SectionIntro from "./SectionIntro";
 import SectionNight from "./SectionNight";
 import Timeline from "./Timeline";
 import StarField from "./StarField";
@@ -59,9 +60,18 @@ export default function Preview() {
       <StarField />
 
       <main className="container preview-main">
+        {/* 旅行全体のイントロダクション */}
+        <SectionIntro />
+
         {/* 1日目 */}
         <section className="preview__section day-section" aria-label="1日目">
-          <SectionHero title={DAY1.dateLabel} lead={DAY1.intro} />
+          <SectionHero
+            title={DAY1.dateLabel}
+            lead={DAY1.intro}
+            parkName={DAY1.parkName}
+            latinLabel={DAY1.parkLatin}
+            dateText={DAY1.dateText}
+          />
           <Timeline items={DAY1.items} dayLabel="1日目" />
         </section>
 
@@ -73,7 +83,13 @@ export default function Preview() {
 
         {/* 2日目 */}
         <section className="preview__section day-section" aria-label="2日目">
-          <SectionHero title={DAY2.dateLabel} lead={DAY2.intro} />
+          <SectionHero
+            title={DAY2.dateLabel}
+            lead={DAY2.intro}
+            parkName={DAY2.parkName}
+            latinLabel={DAY2.parkLatin}
+            dateText={DAY2.dateText}
+          />
           <Timeline items={DAY2.items} dayLabel="2日目" />
         </section>
       </main>

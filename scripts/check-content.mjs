@@ -22,7 +22,7 @@ function checkFile(filePath) {
   if (statusMatch) {
     for (const match of statusMatch) {
       const status = match.match(/"([^"]+)"/)[1];
-      if (status !== 'sample' && status !== 'confirmed') {
+      if (status !== 'sample' && status !== 'tentative' && status !== 'confirmed') {
         ERRORS.push(`${filePath}: 無効な status 値 "${status}"`);
       }
     }

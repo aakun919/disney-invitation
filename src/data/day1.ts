@@ -3,9 +3,11 @@ import type { DayPlan } from "../types";
 export const DAY1: DayPlan = {
   id: "day-1",
   dateLabel: "1日目",
-  parkName: "",
-  parkLatin: "",
-  intro: "",
+  dateText: "2027年3月13日（土）",
+  parkName: "東京ディズニーランド",
+  parkLatin: "TOKYO DISNEYLAND",
+  intro:
+    "夢と魔法の王国で過ごす一日。開園から夜まで、ふたりのペースでゆっくりと巡ります。",
   items: [
     {
       id: "day1-arrival",
