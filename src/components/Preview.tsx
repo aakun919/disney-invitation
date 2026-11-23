@@ -1,129 +1,95 @@
+import { useEffect } from "react";
+import { DAY1 } from "../data/day1";
+import { NIGHT } from "../data/night";
+import { DAY2 } from "../data/day2";
+import SectionHero from "./SectionHero";
+import SectionNight from "./SectionNight";
+import Timeline from "./Timeline";
 import StarField from "./StarField";
-import { INTRO } from "../constants/intro";
 
-const SPACE_TOKENS: Array<{ token: string; px: number }> = [
-  { token: "--space-4", px: 16 },
-  { token: "--space-5", px: 24 },
-  { token: "--space-6", px: 32 },
-  { token: "--space-7", px: 48 },
-  { token: "--space-8", px: 64 },
-];
-
-/**
- * オープニング後の本編プレビュー画面。
- * ステップ2で作成したデザイン基盤の確認用画面をそのまま活用する。
- * 仮タイトル・仮メッセージは constants/intro.ts に一本化済み。
- */
 export default function Preview() {
+  // スクロール連動のフェードイン（Reveal）監視
+  useEffect(() => {
+    // reduced-motion の場合は即座に全要素を表示
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const revealElements = document.querySelectorAll<HTMLElement>(".reveal");
+
+    if (prefersReducedMotion || typeof IntersectionObserver === "undefined") {
+      revealElements.forEach((el) => el.classList.add("is-visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        rootMargin: "0px 0px -40px 0px",
+        threshold: 0.1,
+      }
+    );
+
+    revealElements.forEach((el) => observer.observe(el));
+
+    // フォールバック: 万一IntersectionObserverが発火しなかった場合でも確実に表示
+    const fallbackTimer = setTimeout(() => {
+      revealElements.forEach((el) => {
+        if (!el.classList.contains("is-visible")) {
+          el.classList.add("is-visible");
+        }
+      });
+    }, 1200);
+
+    return () => {
+      clearTimeout(fallbackTimer);
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <>
+    <div className="layer-content preview-page">
       <StarField />
-      <main className="preview layer-content container">
-        {/* ヒーロー: 仮の招待状タイトル */}
-        <header className="preview__hero">
-          <div className="ornament" aria-hidden="true">
-            <span className="ornament__gem" />
-          </div>
-          <p className="latin-label">Design Preview</p>
-          <h1 className="preview__title font-display gold-text">
-            {INTRO.title}
-          </h1>
-          <p className="text-lead preview__lead">{INTRO.lead}</p>
-        </header>
 
-        {/* タイポグラフィ階層 */}
-        <section className="preview__section" aria-label="文字階層の見本">
-          <h2 className="preview__section-title">Typography</h2>
-          <div className="type-sample">
-            <div>
-              <p className="type-sample__label">見出し 大 / 明朝 + Cormorant</p>
-              <h2 className="font-display gold-text">ふたりの特別な一日</h2>
-            </div>
-            <div>
-              <p className="type-sample__label">本文 / 明朝</p>
-              <p className="text-lead">
-                忙しい毎日を少し離れて、星の下をふたりで歩く時間をおくりませんか。
-              </p>
-            </div>
-            <div>
-              <p className="type-sample__label">本文 / ゴシック</p>
-              <p>
-                開催日や集合場所などの詳細は、しおりの各ページでご案内します。
-              </p>
-            </div>
-            <div>
-              <p className="type-sample__label">補助テキスト</p>
-              <p className="text-caption">
-                ※ このページはプレビューです。内容は後日差し替わります。
-              </p>
-            </div>
-          </div>
+      <main className="container preview-main">
+        {/* 1日目 */}
+        <section className="preview__section day-section" aria-label="1日目">
+          <SectionHero title={DAY1.dateLabel} lead={DAY1.intro} />
+          <Timeline items={DAY1.items} dayLabel="1日目" />
         </section>
 
-        <hr className="hairline-divider" />
-
-        {/* UI 部品見本 */}
-        <section className="preview__section" aria-label="UI部品の見本">
-          <h2 className="preview__section-title">Components</h2>
-          <div className="preview__grid-2">
-            <div style={{ display: "grid", gap: "var(--space-4)" }}>
-              <div style={{ display: "flex", gap: "var(--space-3)", flexWrap: "wrap" }}>
-                <button type="button" className="btn btn--gold">
-                  招待状をひらく
-                </button>
-                <button type="button" className="btn btn--ghost">
-                  詳細を見る
-                </button>
-              </div>
-              <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
-                <span className="chip">アトラクション</span>
-                <span className="chip">食事</span>
-                <span className="chip">ショー・パレード</span>
-              </div>
-            </div>
-            <article className="card card--interactive">
-              <p className="latin-label">Sample Card</p>
-              <h3
-                className="font-display"
-                style={{ fontSize: "var(--fs-600)", margin: "var(--space-2) 0" }}
-              >
-                見本カード — ひとつの予定
-              </h3>
-              {/* [REPLACE] カード本文は仮文案 */}
-              <p style={{ color: "var(--ivory-soft)", fontSize: "var(--fs-350)" }}>
-                時刻・場所・ひとこと説明で構成される予定カードです。タップで詳細がひらきます。
-              </p>
-            </article>
-          </div>
+        {/* 夜 */}
+        <section className="preview__section night-section" aria-label="夜">
+          <SectionNight />
+          <Timeline items={NIGHT.items} dayLabel="夜" />
         </section>
 
-        <hr className="hairline-divider" />
-
-        {/* スペーシングスケール */}
-        <section className="preview__section" aria-label="余白スケールの見本">
-          <h2 className="preview__section-title">Spacing Scale</h2>
-          <div className="space-scale">
-            {SPACE_TOKENS.map(({ token, px }) => (
-              <div key={token} className="space-scale__row">
-                <span style={{ width: 96 }}>{token}</span>
-                <span
-                  className="space-scale__bar"
-                  style={{ width: px * 2 }}
-                  aria-hidden="true"
-                />
-                <span>{px}px</span>
-              </div>
-            ))}
-          </div>
+        {/* 2日目 */}
+        <section className="preview__section day-section" aria-label="2日目">
+          <SectionHero title={DAY2.dateLabel} lead={DAY2.intro} />
+          <Timeline items={DAY2.items} dayLabel="2日目" />
         </section>
-
-        <footer className="preview__hero" style={{ marginTop: "var(--space-9)" }}>
-          <div className="ornament" aria-hidden="true">
-            <span className="ornament__gem" />
-          </div>
-          <p className="text-caption">Design System Preview / Navy &amp; Champagne Gold</p>
-        </footer>
       </main>
-    </>
+
+      {/* 上質なブックレットフッター */}
+      <footer className="preview__footer">
+        <div className="preview__footer-inner">
+          <div className="ornament section-hero__ornament" aria-hidden="true">
+            <span className="ornament__gem" />
+          </div>
+          <p className="preview__footer-message">
+            心に残る特別な時間をお過ごしいただけますように
+          </p>
+          <p className="preview__footer-sub">A Wonderful Journey Awaits You</p>
+        </div>
+      </footer>
+    </div>
   );
 }

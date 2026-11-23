@@ -1,0 +1,177 @@
+# Disney Invitation（ディズニー旅行招待状・しおり）引き継ぎ書
+
+本ドキュメントは、本プロジェクトを別のAI・エージェント・開発者が引き継いで作業を継続できるように、プロジェクトの背景、これまでの実装・改善経緯、ファイル構造と保存場所、環境設定、開発・検証コマンド、および今後の方針をまとめたものです。
+
+---
+
+## 1. プロジェクト概要
+
+- **目的**: パートナーへの誕生日プレゼントとして渡す、デジタル旅行招待状＆旅のしおり（Webアプリケーション）。
+- **世界観・デザインテーマ**: 「深いネイビー（`#070d1f`〜`#0a1128`）× 控えめなシャンパンゴールド（`#c9a96a`）」を基調とした、上質な夜空と星屑のラグジュアリーデザイン。
+- **技術スタック**:
+  - **フロントエンド**: React 18, TypeScript, Vite
+  - **スタイリング**: Vanilla CSS（デザイントークン設計、CSS変数）
+  - **品質管理 / テスト**: ESLint, TypeScript (`tsc --noEmit`), Playwright E2E（Chromium）
+  - **実行環境**: Windows (Node.js v24.13.1)
+
+---
+
+## 2. 現在のステータスと達成状況
+
+Phase 1〜Phase 2.6 を通じて、UI/UXの大幅刷新、不要ファイル隔離、重複UI解消、デザイン調整、印刷用スタイルまで完了し、すべての検証がパスしています。
+
+| 検証項目 | コマンド | 最新結果 |
+| :--- | :--- | :--- |
+| **ESLint** | `npm run lint` | **PASS**（エラー 0件、警告 0件） |
+| **Type Check & Build** | `npm run build` | **PASS**（エラーなし、本番ビルド完了） |
+| **Content Check** | `npm run check:content` | **PASS**（整合性パス） |
+| **E2E Tests** | `npx playwright test` | **PASS**（全21件パス、回帰ゼロ） |
+
+---
+
+## 3. これまでの実装・改善履歴
+
+### Phase 2: UI/UX フルリニューアル
+- **オープニング演出**: 封筒型アニメーション、Wax Seal（封蝋）クリック時の開封モーション、Skipボタン、再訪時短縮（`sessionStorage`）。
+- **ヒーロー・タイムライン**: 各日程（DAY ONE / DAY TWO）のヘッダーライン、時間軸の縦ラインと金色のノード（丸印）、ホバー効果。
+- **SectionNight**: 宿泊ホテル（グランドシャトー）の特別セクション（Duplicate Canvasの解消と洗練）。
+- **フッター**: 温かみのあるメッセージとサインオフの追加。
+
+### Phase 2.1 〜 2.2: macOS/Windows 環境統合と AppleDouble 隔離
+- OneDrive同期に起因して混入した74件の `._*` ファイル（AppleDouble）を検出し、ハッシュ付きマニフェストを作成してプロジェクト外へ完全退避。
+- 差分退避ファイル `pre-phase2-1.diff`（105,177 bytes）を安全にバックアップ。
+
+### Phase 2.3 〜 2.4: CheckItem 重複解消（P0）
+- Timelineカードのタイトルがカード見出しとチェックボタン内部で二重表示されていた問題を最小修正。
+- ボタン内のラベルを直感的な「未完了 / 完了」に変更しつつ、`aria-label` およびスクリーンリーダー用テキスト（`.sr-only`）でアクセシビリティと既存E2Eテスト互換性を100%維持。
+
+### Phase 2.5: カテゴリーチップの視認性向上（P1）
+- 各予定のカテゴリー（アトラクション、食事、ショー、買い物、休憩、ひととき）に、世界観を崩さない上品な透過アクセントカラー（サファイアブルー、アンバー、ローズ等）を適用。
+
+### Phase 2.6: 不要未追跡ファイルの隔離 & 印刷用スタイル（P2）
+- 不要な0バイトファイル（`S`, `{`）および重複 `src/vite.config.ts` を隔離フォルダへ退避。
+- `@media print` スタイルを追加。白地背景への自動反転、不要な操作ボタン・星屑背景の非表示、改ページ制御（`break-inside: avoid`）を実装し、紙のしおり・PDF出力に完全対応。
+
+---
+
+## 4. プロジェクトのディレクトリ構造と重要ファイル
+
+```text
+disney-invitation/
+├── index.html                   # エントリーHTML
+├── package.json                 # 依存関係・npmスクリプト
+├── vite.config.ts               # Vite設定（ルート配置が正規）
+├── playwright.config.ts         # Playwright設定
+├── HANDOVER.md                  # 本引き継ぎ書
+├── src/
+│   ├── main.tsx                 # アプリ起動エントリー
+│   ├── App.tsx                  # ルートコンポーネント
+│   ├── types.ts                 # 共通TypeScript型定義（※変更禁止）
+│   ├── components/
+│   │   ├── Opening.tsx          # 封筒型オープニング画面
+│   │   ├── Preview.tsx          # 本編ブックレット全体
+│   │   ├── SectionHero.tsx      # 日程ヒーロー（DAY ONE等）
+│   │   ├── Timeline.tsx         # タイムライン（カード一覧・時間軸）
+│   │   ├── CheckItem.tsx        # 完了チェックボタン（P0修正済み）
+│   │   ├── FavoriteButton.tsx   # お気に入り登録ボタン
+│   │   ├── SectionNight.tsx     # 夜の特別セクション（グランドシャトー）
+│   │   └── StarField.tsx        # 星屑背景キャンバス
+│   ├── data/
+│   │   ├── categories.ts        # カテゴリーマスタ
+│   │   ├── day1.ts              # 1日目の予定データ（※秘密情報保持）
+│   │   ├── night.ts             # 宿泊・夜のデータ
+│   │   └── day2.ts              # 2日目の予定データ
+│   ├── hooks/
+│   │   └── useLocalStorageState.ts # localStorage同期カスタムフック
+│   └── styles/
+│       ├── tokens.css           # デザイントークン（色・文字・余白）
+│       ├── base.css             # リセット・共通クラス（.reveal, .container）
+│       ├── components.css       # タイムライン・ボタン・チップ・カードスタイル
+│       ├── pages.css            # ページ構成・@media print 印刷用スタイル
+│       └── opening.css          # 封筒・シーリングワックスアニメーション
+├── scripts/
+│   ├── check-content.mjs        # コンテンツ整合性検証
+│   └── verify-samples.mjs       # サンプルデータ検証用スクリプト
+├── tests/
+│   └── e2e/
+│       ├── checklist.spec.ts    # タイムライン・操作・永続化E2Eテスト
+│       └── opening.spec.ts      # オープニング・遷移E2Eテスト
+└── screenshots/
+    ├── phase2-3/                # Phase 2.3 評価時スクリーンショット（15枚）
+    ├── phase2-4/                # Phase 2.4 CheckItem修正後スクリーンショット（9枚）
+    └── phase2-5/                # チップ改善・印刷プレビュー スクリーンショット（4枚）
+```
+
+---
+
+## 5. 保存場所とバックアップ資産
+
+1. **プロジェクト作業ディレクトリ**:
+   `C:\Users\USER\OneDrive - nagoya-c.ed.jp\デスクトップ\.cline\data\workspaces\chat\disney-invitation`
+2. **Phase 2.1 以前の差分退避ファイル（pre-phase2-1.diff）**:
+   `C:\Users\USER\.gemini\antigravity\brain\2fde901f-14d8-4130-8d4c-44bc3be016fc\scratch\pre-phase2-1.diff`
+   （※変更・削除厳禁）
+3. **隔離ファイル領域（Quarantine）**:
+   - AppleDouble（74件）: `%USERPROFILE%\Desktop\disney-invitation-quarantine\appledouble\`
+   - 未追跡ゴミファイル（3件）: `%USERPROFILE%\Desktop\disney-invitation-quarantine\untracked\`
+     （各フォルダ内にハッシュ付き `manifest.json` あり）
+
+---
+
+## 6. 開発環境・実行手順（Windows環境特記事項）
+
+### 注意点（Node.js と Git）
+- **Node.js**: `C:\Users\USER\node\PFiles64\nodejs` に配置されています。新しいシェルセッションでは自動認識されない場合があるため、コマンド実行時は以下のように環境変数を先頭に付与してください。
+  ```powershell
+  $env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"
+  ```
+- **npm / npx**: PowerShellの実行ポリシーにより `npm.ps1` がブロックされるため、必ず `npm.cmd` または `npx.cmd` を使用してください。
+- **Git**: 現在ホスト環境のPATHに認識されていません。破壊的コマンド（`git reset` / `git checkout` / `git clean` 等）は**厳禁**です。
+
+### 開発・検証コマンド一覧
+```powershell
+# 1. 依存ライブラリの型・構文チェック
+$env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npm.cmd run lint
+
+# 2. 本番ビルド検証（TypeScript型チェック含む）
+$env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npm.cmd run build
+
+# 3. コンテンツ整合性チェック
+$env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npm.cmd run check:content
+
+# 4. プレビューサーバー起動（テスト実行時に必要）
+$env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npm.cmd run preview -- --port 4173 --host 127.0.0.1
+
+# 5. Playwright E2Eテスト実行（全21件）
+$env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npx.cmd playwright test
+```
+
+---
+
+## 7. 最重要制約・引き継ぎルール
+
+後続のエージェントや開発者は以下のルールを厳守してください。
+
+1. **破壊的コマンドの禁止**:
+   `git reset`、`git checkout`、`git restore`、`git clean` は使用禁止。
+2. **既存テスト・コア設定の保護**:
+   `tests/`、`package.json`、`package-lock.json`、`src/types.ts`、`src/data/`、`.clinerules` は勝手に変更・弱体化しないこと。
+3. **退避ファイルの保護**:
+   `pre-phase2-1.diff` および隔離フォルダ内のファイルを削除・変更しないこと。
+4. **秘密情報・サプライズの保護**:
+   フロントエンドに不要なサプライズ情報や資格情報を直書きしないこと。
+5. **デザイン思想の維持**:
+   派手な装飾を追加せず、余白・細線・タイポグラフィによる「大人のための上質なブックレット」の世界観を保つこと。
+
+---
+
+## 8. 今後の方針・改善候補（Next Steps）
+
+プロジェクトはプレゼント用として十分に高い完成度にありますが、さらなるブラッシュアップを行う場合の推奨項目です。
+
+1. **実データ（旅行日程）の最終確認と微調整**:
+   - 実際のプレゼント相手・日程に合わせた `src/data/day1.ts`, `night.ts`, `day2.ts` の内容確定。
+2. **印刷実物の確認（PDFエクスポート検証）**:
+   - ブラウザの「印刷」ダイアログ（A4・背景のグラフィックを有効化）でPDF保存し、紙面の見栄えを実寸で確認。
+3. **ホスティング環境へのデプロイ（必要な場合）**:
+   - Vercel、Cloudflare Pages、GitHub Pages 等へプライベートまたはパスワード保護付きでデプロイ。

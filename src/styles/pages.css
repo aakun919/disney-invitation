@@ -1,94 +1,309 @@
 /* ============================================================
-   Pages — ページ固有のスタイル（現段階: デザインプレビュー）
+   Pages — ページ固有のスタイル（旅行ブックレット本編）
    ============================================================ */
 
 .preview {
-  padding: var(--space-9) 0 var(--space-9);
-}
-
-.preview__hero {
-  text-align: center;
-  display: grid;
-  gap: var(--space-5);
-  justify-items: center;
-  margin-bottom: var(--space-9);
-}
-
-.preview__title {
-  font-size: var(--fs-900);
-}
-
-.preview__lead {
-  max-width: 34em;
+  padding: var(--space-8) 0 var(--space-9);
 }
 
 /* プレビュー各セクション */
 .preview__section {
-  display: grid;
-  gap: var(--space-5);
+  display: block;
   margin-bottom: var(--space-9);
+  position: relative;
 }
 
-.preview__section-title {
-  font-family: var(--font-display);
-  font-size: var(--fs-600);
-  color: var(--gold-bright);
-  letter-spacing: 0.12em;
-  border-bottom: var(--hairline);
-  padding-bottom: var(--space-3);
+.preview__section.day-section {
+  position: relative;
 }
 
-/* タイポグラフィ見本 */
-.type-sample {
-  display: grid;
-  gap: var(--space-4);
+.preview__section.night-section {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 30%, rgba(20, 32, 62, 0.4) 0%, transparent 75%);
+  padding: var(--space-6) 0 var(--space-7);
+  border-top: 1px solid rgba(201, 169, 106, 0.15);
+  border-bottom: 1px solid rgba(201, 169, 106, 0.15);
 }
 
-.type-sample__label {
-  color: var(--ivory-faint);
-  font-size: var(--fs-300);
-  letter-spacing: var(--ls-latin);
-  text-transform: uppercase;
+/* ------------------------------------------------------------
+   Section Hero（各日・セクションのメイン見出し）
+   ------------------------------------------------------------ */
+.section-hero {
+  text-align: center;
+  padding: var(--space-6) var(--gutter) var(--space-5);
+  position: relative;
 }
 
-.type-sample h1 {
-  font-size: var(--fs-900);
+.section-hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.type-sample h2 {
-  font-size: var(--fs-750);
-}
-
-/* PC: 2カラムで余白を活かす */
-@media (min-width: 900px) {
-  .preview {
-    padding: var(--space-9) 0;
-  }
-
-  .preview__grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-7);
-    align-items: start;
-  }
-}
-
-/* スペーススケールの見本 */
-.space-scale {
-  display: grid;
-  gap: var(--space-2);
-}
-
-.space-scale__row {
+.section-hero__latin-wrap {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-4);
-  font-size: var(--fs-300);
-  color: var(--ivory-faint);
+  width: 100%;
+  max-width: 380px;
+  margin-bottom: var(--space-3);
 }
 
-.space-scale__bar {
-  height: 8px;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, var(--gold-dim), transparent);
+.section-hero__line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-gold), transparent);
+}
+
+.section-hero__latin {
+  font-family: var(--font-display);
+  font-size: var(--fs-300);
+  letter-spacing: var(--ls-latin);
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.section-hero__title {
+  font-family: var(--font-mincho);
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: var(--lh-tight);
+  margin: 0 0 var(--space-3);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.section-hero__park {
+  font-family: var(--font-display);
+  font-size: var(--fs-400);
+  letter-spacing: 0.08em;
+  color: var(--gold-bright);
+  margin: 0 0 var(--space-3);
+}
+
+.section-hero__lead {
+  font-family: var(--font-mincho);
+  font-size: var(--fs-400);
+  line-height: var(--lh-body);
+  color: var(--ivory-soft);
+  max-width: 36em;
+  margin: 0 auto var(--space-4);
+  letter-spacing: 0.03em;
+}
+
+.section-hero__ornament {
+  justify-content: center;
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-2);
+  opacity: 0.75;
+}
+
+/* ------------------------------------------------------------
+   Section Night（夜の特別な時間）
+   ------------------------------------------------------------ */
+.section-night {
+  text-align: center;
+  padding: var(--space-7) var(--gutter) var(--space-5);
+  position: relative;
+}
+
+.section-night__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.section-night__latin-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: var(--space-3);
+}
+
+.section-night__title {
+  font-family: var(--font-mincho);
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: var(--lh-tight);
+  margin: 0 0 var(--space-4);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+}
+
+.section-night__lead {
+  font-family: var(--font-mincho);
+  font-size: var(--fs-450);
+  line-height: var(--lh-body);
+  color: var(--gold-bright);
+  margin: 0 auto var(--space-4);
+  letter-spacing: 0.04em;
+}
+
+.section-night__description {
+  font-family: var(--font-body);
+  font-size: var(--fs-400);
+  line-height: var(--lh-body);
+  color: var(--ivory-soft);
+  margin: 0 auto var(--space-4);
+}
+
+/* ------------------------------------------------------------
+   ブックレットフッター
+   ------------------------------------------------------------ */
+.preview__footer {
+  text-align: center;
+  padding: var(--space-8) var(--gutter) var(--space-9);
+  border-top: 1px solid rgba(201, 169, 106, 0.15);
+  margin-top: var(--space-8);
+}
+
+.preview__footer-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.preview__footer-message {
+  font-family: var(--font-mincho);
+  font-size: var(--fs-400);
+  color: var(--ivory-soft);
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+.preview__footer-sub {
+  font-family: var(--font-display);
+  font-size: var(--fs-300);
+  letter-spacing: var(--ls-latin);
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* レスポンシブ調整 */
+@media (min-width: 768px) {
+  .section-hero {
+    padding: var(--space-8) var(--gutter) var(--space-6);
+  }
+
+  .section-night {
+    padding: var(--space-9) var(--gutter) var(--space-6);
+  }
+}
+
+/* ------------------------------------------------------------
+   印刷用スタイル（紙のしおり・ブックレットとしての最適化）
+   ------------------------------------------------------------ */
+@media print {
+  @page {
+    margin: 15mm;
+    size: A4 portrait;
+  }
+
+  /* 背景・テキストの印刷適正化 */
+  body {
+    background: #ffffff !important;
+    color: #1a1a1a !important;
+  }
+
+  /* 不要な装飾・星屑・アニメーション要素を非表示 */
+  .starfield,
+  .opening,
+  .timeline__actions {
+    display: none !important;
+  }
+
+  /* Reveal アニメーションを解除してすべて確実に表示 */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .preview {
+    padding: 0 !important;
+  }
+
+  .preview__section {
+    margin-bottom: var(--space-6) !important;
+    break-inside: avoid;
+  }
+
+  .preview__section.night-section {
+    background: none !important;
+    border-top: 1px solid #c9a96a !important;
+    border-bottom: 1px solid #c9a96a !important;
+  }
+
+  .section-hero__latin {
+    color: #8c733e !important;
+  }
+
+  .section-hero__title {
+    color: #111827 !important;
+  }
+
+  .section-hero__desc,
+  .timeline__desc,
+  .preview__footer-message {
+    color: #374151 !important;
+  }
+
+  /* タイムラインカードの印刷用レイアウト */
+  .timeline::before {
+    background: #c9a96a !important;
+  }
+
+  .timeline__item {
+    background: #faf8f5 !important;
+    border: 1px solid #d4c3a3 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    break-inside: avoid;
+    margin-bottom: var(--space-3) !important;
+    padding: var(--space-3) var(--space-4) !important;
+  }
+
+  .timeline__item::before {
+    background: #ffffff !important;
+    border-color: #8c733e !important;
+    box-shadow: none !important;
+  }
+
+  .timeline__time {
+    color: #8c733e !important;
+  }
+
+  .timeline__title {
+    color: #111827 !important;
+  }
+
+  .timeline__location {
+    color: #8c733e !important;
+  }
+
+  /* チップの印刷用スタイル */
+  .chip {
+    border: 1px solid #b5a075 !important;
+    color: #4b5563 !important;
+    background: #f3ede2 !important;
+  }
+
+  .preview__footer {
+    border-top: 1px solid #c9a96a !important;
+    margin-top: var(--space-6) !important;
+    padding: var(--space-5) 0 !important;
+  }
+
+  .preview__footer-sub {
+    color: #8c733e !important;
+  }
 }

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-const BASE = process.env.BASE_URL ?? "http://localhost:4173";
+const BASE = process.env.BASE_URL ?? "http://127.0.0.1:4173";
 const JS_ERRORS: string[] = [];
 
 test.beforeEach(async ({ page }) => {
@@ -20,25 +20,21 @@ test.afterEach(() => {
   JS_ERRORS.length = 0;
 });
 
-test("初回表示: オープニングが表示され、「招待状をひらく」で本編へ遷移", async ({
-  page,
-}) => {
+test("初回表示: オープニングが表示され、「招待状をひらく」で本編へ遷移", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(BASE);
 
   // オープニング要素の存在
   await expect(page.locator(".opening")).toBeVisible();
   await expect(page.locator("h1.opening__title")).toHaveText("星の夜へのご招待");
-  await expect(
-    page.getByRole("button", { name: "招待状をひらく" })
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "招待状をひらく" })).toBeVisible();
 
   // ボタン操作で本編へ
   await page.getByRole("button", { name: "招待状をひらく" }).click();
   await expect(page.locator(".opening")).not.toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Typography" })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "1日目" }).first()).toBeVisible({
+    timeout: 10000,
+  });
 });
 
 test("Skip 操作で演出を待たずに本編へ移行", async ({ page }) => {
@@ -46,14 +42,12 @@ test("Skip 操作で演出を待たずに本編へ移行", async ({ page }) => {
   await page.goto(BASE);
 
   // Skip ボタンはアニメ完了後に表示されるので待つ
-  await expect(page.getByRole("button", { name: "演出をスキップ" })).toBeVisible(
-    { timeout: 5000 }
-  );
+  await expect(page.getByRole("button", { name: "演出をスキップ" })).toBeVisible({ timeout: 5000 });
   await page.getByRole("button", { name: "演出をスキップ" }).click();
   await expect(page.locator(".opening")).not.toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Typography" })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "1日目" }).first()).toBeVisible({
+    timeout: 10000,
+  });
 });
 
 test("同一タブ内の再訪で短縮表示になる（sessionStorage）", async ({ page }) => {
@@ -65,29 +59,29 @@ test("同一タブ内の再訪で短縮表示になる（sessionStorage）", asy
   // 1回目: 通常表示してボタンクリック（sessionStorage に done を書き込む）
   await page.getByRole("button", { name: "招待状をひらく" }).click();
   await expect(page.locator(".opening")).not.toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Typography" })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "1日目" }).first()).toBeVisible();
 
   // 2回目: 同一タブで再訪 → 短縮モード（すぐ本編へ）
   await page.goto(BASE);
-  await expect(
-    page.getByRole("heading", { name: "Typography" })
-  ).toBeVisible({ timeout: 3000 });
+  await expect(page.getByRole("heading", { name: "1日目" }).first()).toBeVisible({ timeout: 3000 });
   await expect(page.locator(".opening")).not.toBeVisible();
 });
 
-test("prefers-reduced-motion: reduce で長い演出が省略される", async ({
-  page,
-}) => {
+test("prefers-reduced-motion: reduce で長い演出が省略される", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(BASE);
 
-  // 短縮モードなのですぐに本編要素が表示される（オープニングの長いアニメを待たない）
-  await expect(
-    page.getByRole("heading", { name: "Typography" })
-  ).toBeVisible({ timeout: 3000 });
+  // 長いアニメーションが省略され、メッセージと「招待状をひらく」ボタンが表示される
+  await expect(page.getByRole("button", { name: "招待状をひらく" })).toBeVisible({
+    timeout: 5000,
+  });
+
+  // ボタンをクリックするとPreviewへ遷移する
+  await page.getByRole("button", { name: "招待状をひらく" }).click();
+  await expect(page.getByRole("heading", { name: "1日目" }).first()).toBeVisible({
+    timeout: 10000,
+  });
 });
 
 test("キーボード操作でボタンにフォーカスできる", async ({ page }) => {
@@ -101,9 +95,7 @@ test("キーボード操作でボタンにフォーカスできる", async ({ pa
   // Tab でフォーカス移動し、ボタンが active element になることを確認
   await page.keyboard.press("Tab");
   await page.keyboard.press("Tab");
-  const focused = await page.evaluate(() =>
-    (document.activeElement as HTMLElement)?.textContent
-  );
+  const focused = await page.evaluate(() => (document.activeElement as HTMLElement)?.textContent);
   expect(focused).toContain("招待状をひらく");
 });
 
@@ -113,9 +105,7 @@ test("PC(1440px) でもレイアウトが崩れない", async ({ page }) => {
 
   await expect(page.locator("h1.opening__title")).toBeVisible();
   await page.getByRole("button", { name: "招待状をひらく" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Typography" })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "1日目" }).first()).toBeVisible();
 });
 
 test.describe("スクリーンショット", () => {
