@@ -175,3 +175,19 @@ $env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npx.cmd playwright t
    - ブラウザの「印刷」ダイアログ（A4・背景のグラフィックを有効化）でPDF保存し、紙面の見栄えを実寸で確認。
 3. **ホスティング環境へのデプロイ（必要な場合）**:
    - Vercel、Cloudflare Pages、GitHub Pages 等へプライベートまたはパスワード保護付きでデプロイ。
+
+---
+
+## 9. 2026-11-23 Mac 正本化（Muse による引き継ぎ作業）
+
+開発の正本を Windows から Mac に一本化した（ユーザー決定・承認済み）。
+
+- **正本の場所**: `/Users/ochiaiatsunori/.cline/data/workspaces/chat/disney-invitation`（この Mac コピー）。Windows 側は今後編集しない。
+- **作業前スナップショット**: `~/muse-bridge/snapshots/disney-invitation-pre-mac-canonical-20261123.tar.gz`（node_modules・.git・dist を除く全体）
+- **ベースラインコミット**: `0e43529`「chore: Macを正本として現状を保全（ベースライン）」— 未追跡だった中核ファイル（src/data/*、Timeline 等）を含む現状一式を保全。push はしていない（リモートなし）。
+- **隔離（削除ではなく移動）**: 0バイトの `src/components/S`、`src/components/{`、重複 `src/vite.config.ts` を `~/muse-bridge/quarantine/disney-invitation-20261123/` へ移動（`{` はシェル都合で `brace` に改名して保管。README.txt に対照表あり）。
+- **復旧した不足ファイル**: `playwright.config.ts`（preview 4173 前提、webServer 自動起動・既存サーバー再利用）と `scripts/check-secrets.mjs`（src と dist を秘密キーワード＋資格情報パターンで走査。ソース側はコメントを除いて検査）を新規作成。
+- **node_modules**: Windows 由来のコピーを破棄し、Mac で `npm ci` し直した（180 packages、esbuild は darwin-arm64）。
+- **Mac での検証結果（2026-11-23）**: build（tsc 込み）PASS / lint PASS / check:content PASS / check:secrets PASS。dist は単一 JS（238KB）・単一 CSS（582KB）に正常化（旧来の重複バンドルは解消）。ただし dist 総量は約31MBで、大半はフォントのサブセットファイル（938件）。表示時に必要な分だけ読み込まれるが、将来の最適化候補。
+- **既知の残件**: npm audit で moderate 7件（eslint 9.39.5 の deprecated 警告含む）。バージョン変更を伴うため今回は未対応。E2E は今回未実施（Playwright ブラウザの有無を次回確認）。
+- **節目のコミットについて**: 本追記と復旧ファイルは「feat: playwright設定と秘密チェックを復旧し引き継ぎを更新（Mac正本化）」としてコミットする。
