@@ -1,3 +1,5 @@
+import OrnamentGem from "./OrnamentGem";
+
 interface SectionHeroProps {
   title: string;
   lead?: string;
@@ -48,9 +50,7 @@ export default function SectionHero({
           <p className="section-hero__lead">{lead}</p>
         )}
 
-        <div className="ornament section-hero__ornament" aria-hidden="true">
-          <span className="ornament__gem" />
-        </div>
+        <OrnamentGem className="section-hero__ornament" />
       </div>
     </header>
   );

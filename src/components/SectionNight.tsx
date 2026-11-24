@@ -1,3 +1,5 @@
+import OrnamentGem from "./OrnamentGem";
+
 export default function SectionNight() {
   return (
     <div className="section-night">
@@ -22,9 +24,7 @@ export default function SectionNight() {
           大切な人と一緒に、ゆっくりとした夜の散歩をお楽しみください。
         </p>
 
-        <div className="ornament section-hero__ornament" aria-hidden="true">
-          <span className="ornament__gem" />
-        </div>
+        <OrnamentGem className="section-hero__ornament" />
       </div>
     </div>
   );

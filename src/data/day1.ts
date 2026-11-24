@@ -4,6 +4,7 @@ export const DAY1: DayPlan = {
   id: "day-1",
   dateLabel: "1日目",
   dateText: "2027年3月13日（土）",
+  dateISO: "2027-03-13",
   parkName: "東京ディズニーランド",
   parkLatin: "TOKYO DISNEYLAND",
   intro:
@@ -33,7 +34,7 @@ export const DAY1: DayPlan = {
       time: "12:30",
       endTime: "13:30",
       title: "昼食",
-      description: "",
+      description: "パーク内のレストランで、ゆっくりと昼食を。混雑を避けて、少し早めの時間がおすすめです。",
       category: "food",
       location: "",
       status: "sample",

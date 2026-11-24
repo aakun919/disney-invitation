@@ -40,6 +40,8 @@ export interface DayPlan {
   dateLabel: string;
   /** 表示用の日付（例: "2027年3月13日（土）"）。未設定なら表示しない */
   dateText?: string;
+  /** 機械可読な日付（"YYYY-MM-DD"）。当日モード（B1）の判定に使う */
+  dateISO?: string;
   parkName: string;
   parkLatin: string;
   intro: string;

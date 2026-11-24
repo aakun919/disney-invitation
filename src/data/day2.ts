@@ -4,6 +4,7 @@ export const DAY2: DayPlan = {
   id: "day-2",
   dateLabel: "2日目",
   dateText: "2027年3月14日（日）",
+  dateISO: "2027-03-14",
   parkName: "東京ディズニーシー",
   parkLatin: "TOKYO DISNEYSEA",
   intro:

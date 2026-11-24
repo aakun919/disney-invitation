@@ -481,3 +481,251 @@
     color: #111827 !important;
   }
 }
+
+/* ==== 仕掛け（2026-11-24 追加） ==== */
+
+/* A4: アンカー移動を滑らかに（reduced-motion では無効） */
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+.preview__section,
+.intro__facts {
+  scroll-margin-top: 24px;
+}
+
+/* A4: 概要の行（リンク化） */
+a.intro__overview-item {
+  text-decoration: none;
+  color: inherit;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+a.intro__overview-item:hover,
+a.intro__overview-item:focus-visible {
+  background: rgba(201, 169, 106, 0.08);
+}
+
+/* C1: 題字の隠しタップで出る一文 */
+.intro__found {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-mincho);
+  font-size: var(--fs-300);
+  letter-spacing: 0.14em;
+  color: var(--gold-bright);
+  animation: gem-phrase-in 0.6s ease both;
+}
+
+/* A1: 星空タップのきらめき */
+.sparkle-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  overflow: hidden;
+}
+.sparkle-burst {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.sparkle-dot {
+  position: absolute;
+  left: -2.5px;
+  top: -2.5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 6px rgba(232, 201, 138, 0.9);
+  opacity: 0;
+  animation: sparkle-fly 1s ease-out forwards;
+}
+.sparkle-burst--big .sparkle-dot {
+  width: 6px;
+  height: 6px;
+}
+@keyframes sparkle-fly {
+  0% {
+    opacity: 0;
+    transform: rotate(calc(var(--i) * 60deg)) translateY(0) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(calc(var(--i) * 60deg)) translateY(-46px) scale(1);
+  }
+}
+.sparkle-burst--big .sparkle-dot {
+  animation-name: sparkle-fly-big;
+}
+@keyframes sparkle-fly-big {
+  0% {
+    opacity: 0;
+    transform: rotate(calc(var(--i) * 36deg)) translateY(0) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(calc(var(--i) * 36deg)) translateY(-84px) scale(1.1);
+  }
+}
+.sparkle-phrase {
+  position: absolute;
+  left: 50%;
+  bottom: 12vh;
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--font-mincho);
+  font-size: var(--fs-400);
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+  animation: sparkle-phrase-in 3.6s ease both;
+}
+@keyframes sparkle-phrase-in {
+  0% { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* A2: 宝石ボタンと返事のフレーズ */
+.ornament--interactive {
+  position: relative;
+}
+.ornament__gem-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  margin: -10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.ornament__gem.is-glowing {
+  animation: gem-glow 2.8s ease both;
+}
+@keyframes gem-glow {
+  0% { filter: brightness(1); }
+  20% { filter: brightness(1.9) drop-shadow(0 0 6px rgba(232, 201, 138, 0.95)); }
+  70% { filter: brightness(1.5) drop-shadow(0 0 4px rgba(232, 201, 138, 0.7)); }
+  100% { filter: brightness(1); }
+}
+.gem-phrase {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-200);
+  letter-spacing: var(--ls-latin);
+  color: var(--gold);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.gem-phrase.is-visible {
+  opacity: 1;
+  animation: gem-phrase-in 0.6s ease both;
+}
+@keyframes gem-phrase-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* B1: 当日モード */
+.timeline__item--now {
+  border-color: rgba(232, 201, 138, 0.75);
+  box-shadow: 0 0 0 1px rgba(232, 201, 138, 0.35), 0 10px 34px rgba(0, 0, 0, 0.45);
+}
+.timeline__item--past {
+  opacity: 0.55;
+}
+.chip--now {
+  border-color: var(--gold-bright);
+  color: #0a1128;
+  background: var(--gold-bright);
+  font-weight: 600;
+}
+
+/* B2: 説明文の展開 */
+.timeline__desc-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s ease;
+}
+.timeline__desc-wrap.is-open {
+  grid-template-rows: 1fr;
+}
+.timeline__desc-inner {
+  overflow: hidden;
+}
+.timeline__more {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: var(--fs-200);
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  cursor: pointer;
+}
+.timeline__more:hover {
+  color: var(--gold-bright);
+}
+.timeline__more-mark {
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+/* C2: エピローグ */
+.epilogue {
+  margin-top: var(--space-10, 64px);
+}
+.epilogue__inner {
+  border: 1px solid rgba(201, 169, 106, 0.35);
+  background: rgba(14, 22, 42, 0.55);
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+}
+.epilogue__title {
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  margin: var(--space-4) 0 var(--space-3);
+}
+.epilogue__text {
+  font-family: var(--font-mincho);
+  line-height: 2;
+  color: var(--ivory);
+  margin: 0 0 var(--space-4);
+}
+.epilogue__sub {
+  font-family: var(--font-display);
+  letter-spacing: var(--ls-latin);
+  font-size: var(--fs-200);
+  color: var(--gold);
+  margin: 0;
+}
+
+@media print {
+  .sparkle-layer {
+    display: none !important;
+  }
+}
