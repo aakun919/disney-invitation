@@ -24,3 +24,6 @@ playwright/.cache/
 # ログ
 npm-debug.log*
 *.log
+
+# フォント生成用キャッシュ（scripts/build-fonts.py が再取得する）
+tools/font-cache/
