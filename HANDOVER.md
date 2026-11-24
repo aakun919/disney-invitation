@@ -191,3 +191,47 @@ $env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npx.cmd playwright t
 - **Mac での検証結果（2026-11-23）**: build（tsc 込み）PASS / lint PASS / check:content PASS / check:secrets PASS。dist は単一 JS（238KB）・単一 CSS（582KB）に正常化（旧来の重複バンドルは解消）。ただし dist 総量は約31MBで、大半はフォントのサブセットファイル（938件）。表示時に必要な分だけ読み込まれるが、将来の最適化候補。
 - **既知の残件**: npm audit で moderate 7件（eslint 9.39.5 の deprecated 警告含む）。バージョン変更を伴うため今回は未対応。E2E も Mac で実走し全21件 PASS（2026-11-23、既存の Chromium を使用、追加ダウンロードなし）。
 - **節目のコミットについて**: 本追記と復旧ファイルは「feat: playwright設定と秘密チェックを復旧し引き継ぎを更新（Mac正本化）」としてコミットする。
+
+---
+
+## 10. 2026-11-24 フォント最適化（VM 作業コピーで実施）
+
+§9 の残件だった「dist 約31MB・フォント938件」を解消した（コミット `4ff6831`）。
+
+- **方式変更**: @fontsource を廃止し、公式フォント（Google Fonts）から生成したセルフホストの woff2 サブセットに置換。書体・ウェイト（Cormorant Garamond 500/600、Shippori Mincho B1 500/600、Zen Kaku Gothic New 400/500）は従来と同一で、見た目は不変（スクリーンショットで前後比較済み）。
+- **2層サブセット**: core（サイト本文の全文字＋かな・ASCII・記号＋小学校配当漢字1,026字）と ext（残りの常用・人名用漢字）を `unicode-range` で出し分け。通常の閲覧では core の6ファイル・約1.04MBだけが転送され、珍しい漢字が出たときだけ ext が追加で読まれる。どちらの層にも無い文字はフォールバック書体で表示される。
+- **成果**: dist 32MB → 3.0MB（ファイル数 941 → 18）、CSS 584KB → 105KB（gzip 247KB → 14.8KB）、フォント転送は 60ファイル → 6ファイル（総転送量は従来比で微減、コンテンツが増えても増えない）。
+- **再生成**: `python3 scripts/build-fonts.py`（要 fonttools / brotli）。ソースフォントは `tools/font-cache/` に自動取得される（git 管理外）。**実データを入れた後は必ず再実行すること** — 本文で使う文字は自動で core に取り込まれる。
+- **ライセンス**: 3書体とも SIL OFL 1.1。再配布条件として `public/fonts/licenses/OFL-*.txt` を同梱。
+- **検証（VM）**: build / lint / check:content / check:secrets PASS、Playwright E2E 21/21 PASS。グリフ網羅チェック済み（従来フォントで表示できた文字はすべて新サブセットでも表示可能。タイトルの「｜」と絵文字「📍」は元々フォントに無く OS 側表示で従来どおり）。
+
+---
+
+## 11. 公開準備（デプロイ候補と手順）— 2026-11-24 整理、未実施
+
+実際のデプロイはユーザーの承認があるまで行わない。本節は承認後すぐ実行できるよう手順を固定したもの。
+
+### 候補の比較（追加コストなしの範囲）
+
+| 候補 | 無料枠 | 非公開性 | 備考 |
+|---|---|---|---|
+| **Cloudflare Pages（推奨）** | ビルド月500回・帯域無制限 | Cloudflare Access 無料枠（50ユーザーまで）でメールOTP保護が可能。URL自体も推測困難 | `public/_headers`（noindex＋長期キャッシュ）がそのまま効く。Git連携で push 連動デプロイも可 |
+| Vercel | Hobby 無料 | パスワード保護は有料（Pro）。noindex は可能 | 個人の非商用利用は Hobby 規約の範囲内か要確認 |
+| Netlify | 無料枠あり | パスワード保護は有料（Pro） | _headers 形式も対応 |
+| GitHub Pages | プライベートリポジトリでは有料プランが必要 | 実質公開のみ | ヘッダー制御不可のため不採用 |
+
+### 推奨手順（Cloudflare Pages）
+
+1. **公開前チェック**: `npm run verify`（build＋lint＋各種 check）と `npx playwright test` が全て PASS。`check:secrets` で dist に秘密情報が無いことを確認（従来ルールどおり、サプライズ情報はリポジトリ・成果物のどこにも置かない）。
+2. **実データ最終化 → `python3 scripts/build-fonts.py` 再実行 → 再ビルド**（フォント core 層へ本文の文字を取り込むため）。
+3. **Pages プロジェクト作成**（ユーザー作業）: Cloudflare アカウントで Pages を作成。方法は2通り:
+   - Direct Upload: ダッシュボードへ `dist/` をアップロード（最も単純）。
+   - Git 連携: GitHub リポジトリ `aakun919/disney-invitation` を接続し、ビルドコマンド `npm run build`、出力 `dist` を指定すると push 連動で自動デプロイ。
+4. **（任意）Access 設定**: 渡す相手と自分のメールアドレスだけを通すポリシーを設定すると、URLを知らない第三者は開けない。
+5. **公開後確認**: 実機（スマホ）でオープニング→本編を通し確認。`curl -sI <URL>` で `X-Robots-Tag: noindex` が付いていることを確認。
+6. **共有**: URL（必要ならQRコード化）を相手へ。公開範囲は「URLを知っている人のみ＋noindex」が前提。
+7. **サプライズの明かし方（従来ルール）**: サイト側に仕掛けは作らない。明かすタイミングでデータを更新して再デプロイするだけ。
+
+### 費用
+
+上記の範囲では ¥0（無料枠内）。独自ドメインを使う場合のみドメイン代が別途かかる（任意）。

@@ -1,0 +1,11 @@
+# Cloudflare Pages 用ヘッダー設定（他ホスティングでは無視される）
+# 検索エンジンに載せない（index.html の meta robots と robots.txt と合わせて三重に防止）
+/*
+  X-Robots-Tag: noindex, nofollow
+
+# ハッシュ付き静的アセットとフォントは長期キャッシュ（内容が変わればファイル名/内容が変わる）
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
