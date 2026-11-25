@@ -18,3 +18,12 @@ createRoot(rootElement).render(
     <App />
   </StrictMode>,
 );
+
+// D5: オフライン対応（本番ビルドでのみ Service Worker を登録する）
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {
+      /* 登録に失敗しても通常の閲覧は継続できる */
+    });
+  });
+}

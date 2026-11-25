@@ -251,3 +251,19 @@ $env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npx.cmd playwright t
 - **C1 題字の隠しタップ**: 「ふたりの旅のしおり」を3回タップで星屑＋「見つけてくれて、ありがとう」。
 - **C2 エピローグ**: 3/15 以降に開くとフッター前に「旅の終わりに」カードが現れる。
 - **検証（VM）**: build / lint / check:content / check:secrets PASS、E2E 21/21 PASS（A4 のリンク追加でキーボード操作テストが落ちたため、リンクに aria-label を付けて解消）。加えて Playwright の時計モックで 3/12 出発日・3/13 12:45 当日モード・3/16 エピローグを実測し、全14項目の仕掛けチェックが PASS。
+
+---
+
+## 13. 2026-11-25 機能追加 第1弾 D1–D6（VM 作業コピーで実施）
+
+しおりビルダー設計案からの移植プラン（第1弾）を実装した。実データ不要の6点のみで、第2弾（当日スティッキーバー等）は実データ投入後に回す。サプライズ情報は一切追加していない（新コピーはすべて旅行一般の汎用文）。
+
+- **D1 持ち物リスト**: 新セクション `SectionPacking` をイントロ直後・日程の前に配置。データは `src/data/packing.ts`（3グループ13項目、旅行一般の準備品のみ）。チェックは既存 `CheckItem`（`check:packing-*`）を再利用し、進捗は金のリング（SVG、`role="progressbar"`）＋「n / 13 準備できました」で表示。
+- **D2 お気に入り一覧**: 未接続だった `FilterBar` を制御コンポーネントとして作り替え、Preview に接続。お気に入り件数表示＋「お気に入りだけ」トグルで全タイムラインを絞り込む（0件の日は空メッセージ）。保存値の同一ウィンドウ内同期のため、`useLocalStorageState` に変更通知イベント（`STORAGE_CHANGED_EVENT`）を追加し、集計用フック `useStoredFlags` を新設（お気に入り・チェック共用）。
+- **D3 時間帯で変わる空気**: `src/lib/trip.ts` に `jstDayPart`（朝5–11/昼11–17/夕17–23/夜23–5、JST）を追加。朝は温かい挨拶＋光の気配、夜は挨拶＋星の密度・明るさ増（`StarField` の係数）。基調色（ネイビー×ゴールド）は変更していない。Preview ルートに `data-daypart` を出す。
+- **D4 表紙パララックス＋ケン・バーンズ**: 星空キャンバスがスクロールに対して 0.15 倍で流れる（rAF スロットル、最大で画面高6%、reduced-motion では無効）。ヒーロー/イントロの光のグローには 28 秒周期のごく緩やかなズーム（CSS のみ、transform のみ、reduced-motion では無効）。パララックスに合わせ `.starfield` は上に 12% の余分を持つ。
+- **D5 PWA/オフライン**: `public/manifest.webmanifest`（standalone、テーマ色は既存トークン）、アイコン3種（favicon と同じ星の意匠を PIL で PNG 化、`public/icons/`）、`public/sw.js`（シェル先読み＋同一オリジン GET のキャッシュ優先、navigate はネット優先→キャッシュ fallback）。登録は本番ビルドのみ（`main.tsx`）。`public/_headers` に `/sw.js` の no-cache を追加。
+- **D6 印刷拡張**: 既存の印刷 CSS に追加 — B2 の説明文を印刷時は全展開（「詳しく見る」は非表示）、絞り込みバーを非表示、持ち物リストを紙のチェック欄として印刷可能に、末尾に印刷時だけ現れる出典ブロック（タイトル＋開いている URL のテキスト＋QR プレースホルダ枠。実 QR は未デプロイのため配布時に差し込む前提で枠のみ）。
+- **フォント再生成**: 新コピーの文字を core 層へ取り込むため `python3 scripts/build-fonts.py` を再実行（woff2 10ファイル＋`fonts.css` が更新）。
+- **検証（VM）**: build / lint / check:content / check:secrets PASS、Playwright E2E **27/27 PASS**（既存21＋新規6: D1 進捗、D2 絞り込み、D3 夜/朝、D5 manifest、D6 印刷を `tests/e2e/phase1.spec.ts` に追加）。dist は 3,111,348 → 3,139,127 bytes（+27,779、+0.9%）で予算内。
+- **コミット**: 本節と実装一式を「feat: 第1弾 D1-D6 を実装（持ち物/お気に入り一覧/時間帯/パララックス/PWA/印刷）」としてコミット（push はしていない）。

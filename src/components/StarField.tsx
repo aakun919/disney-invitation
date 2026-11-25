@@ -1,4 +1,13 @@
 import { useEffect, useRef } from "react";
+import type { DayPart } from "../lib/trip";
+
+/** D3: 時間帯ごとの星の密度・明るさの係数（夜は濃く、朝は控えめに） */
+const DAYPART_STAR_FACTOR: Record<DayPart, { density: number; alpha: number }> = {
+  morning: { density: 0.8, alpha: 0.85 },
+  daytime: { density: 1, alpha: 1 },
+  evening: { density: 1.15, alpha: 1.1 },
+  night: { density: 1.45, alpha: 1.3 },
+};
 
 interface Star {
   x: number;
@@ -29,7 +38,7 @@ const rand = (min: number, max: number) => min + Math.random() * (max - min);
  * - prefers-reduced-motion: reduce では静止画1枚のみ
  * - タブ非表示中は描画を停止し、不要な再描画を防ぐ
  */
-export default function StarField() {
+export default function StarField({ dayPart = "daytime" }: { dayPart?: DayPart }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -37,6 +46,7 @@ export default function StarField() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    const starFactor = DAYPART_STAR_FACTOR[dayPart];
 
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let stars: Star[] = [];
@@ -48,14 +58,17 @@ export default function StarField() {
     let nextMeteorAt = performance.now() + rand(5000, 9000);
 
     const buildStars = () => {
-      const count = Math.min(170, Math.round((width * height) / 9000));
+      const count = Math.min(
+        240,
+        Math.round(((width * height) / 9000) * starFactor.density)
+      );
       stars = Array.from({ length: count }, () => {
         const gold = Math.random() < 0.28;
         return {
           x: Math.random() * width,
           y: Math.random() * height,
           r: rand(0.4, 1.4),
-          baseAlpha: rand(0.18, 0.55),
+          baseAlpha: rand(0.18, 0.55) * starFactor.alpha,
           amp: rand(0.08, 0.28),
           speed: rand(0.0006, 0.0022),
           phase: Math.random() * Math.PI * 2,
@@ -96,7 +109,7 @@ export default function StarField() {
           s.y += s.drift;
           if (s.y > height + 4) s.y = -4;
         }
-        ctx.globalAlpha = Math.max(0.04, alpha);
+        ctx.globalAlpha = Math.min(0.95, Math.max(0.04, alpha));
         ctx.fillStyle = s.gold ? "#e8d5a8" : "#f5f0e6";
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
@@ -164,21 +177,49 @@ export default function StarField() {
       if (motionQuery.matches) drawFrame(0, false);
     };
 
+    /* D4: 背景のパララックス。星空は本文よりゆっくり流れる（最大で画面高の6%まで）。
+       transform のみを使い、reduced-motion では一切動かさない */
+    let parallaxRaf = 0;
+    const applyParallax = () => {
+      parallaxRaf = 0;
+      if (motionQuery.matches) return;
+      const offset = Math.min(window.scrollY * 0.15, window.innerHeight * 0.06);
+      canvas.style.transform = `translate3d(0, ${offset}px, 0)`;
+    };
+    const onScroll = () => {
+      if (parallaxRaf === 0) parallaxRaf = requestAnimationFrame(applyParallax);
+    };
+    const syncParallax = () => {
+      if (motionQuery.matches) {
+        canvas.style.transform = "";
+        window.removeEventListener("scroll", onScroll);
+      } else {
+        window.addEventListener("scroll", onScroll, { passive: true });
+        applyParallax();
+      }
+    };
+
     resize();
     syncMotion();
+    syncParallax();
 
     window.addEventListener("resize", onResize);
     motionQuery.addEventListener("change", syncMotion);
+    motionQuery.addEventListener("change", syncParallax);
     document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
+      if (parallaxRaf !== 0) cancelAnimationFrame(parallaxRaf);
+      canvas.style.transform = "";
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       motionQuery.removeEventListener("change", syncMotion);
+      motionQuery.removeEventListener("change", syncParallax);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [dayPart]);
 
   return <canvas ref={canvasRef} className="starfield" aria-hidden="true" />;
 }

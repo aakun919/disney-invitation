@@ -62,3 +62,26 @@ export function parseTimeToMinutes(time: string): number | null {
   if (!m) return null;
   return Number(m[1]) * 60 + Number(m[2]);
 }
+
+/* ---- D3: 時間帯で変わる空気（2026-11-25 追加） ---- */
+
+export type DayPart = "morning" | "daytime" | "evening" | "night";
+
+/** JST の現在時刻から時間帯を返す（朝 5–11 / 昼 11–17 / 夕 17–23 / 夜 23–5） */
+export function jstDayPart(minutes: number = jstNowMinutes()): DayPart {
+  if (minutes >= 5 * 60 && minutes < 11 * 60) return "morning";
+  if (minutes >= 11 * 60 && minutes < 17 * 60) return "daytime";
+  if (minutes >= 17 * 60 && minutes < 23 * 60) return "evening";
+  return "night";
+}
+
+/**
+ * 時間帯の挨拶（控えめなものだけを返す。昼・夕は null で何も出さない）。
+ * フェーズ挨拶（A3）とは別に、時刻そのものへの小さな応答として使う。
+ */
+export const DAYPART_GREETING: Record<DayPart, string | null> = {
+  morning: "おはようございます。素敵な一日のはじまりです。",
+  daytime: null,
+  evening: null,
+  night: "夜の帳が下りました。星空とともに、しおりを開きましょう。",
+};

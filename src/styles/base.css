@@ -168,11 +168,14 @@ p {
 /* 背景の星屑キャンバス（装飾・操作対象外） */
 .starfield {
   position: fixed;
-  inset: 0;
+  /* D4 パララックスで下方向へずらしても上下端が空かないよう、上に余分を取る */
+  top: -12%;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: 112%;
   z-index: var(--z-bg);
   pointer-events: none;
+  will-change: transform;
 }
 
 /* コンテンツは星屑より手前 */

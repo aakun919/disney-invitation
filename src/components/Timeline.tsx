@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { ScheduleItem } from "../types";
 import { CATEGORY_LABEL } from "../data/categories";
 import { jstNowMinutes, jstToday, parseTimeToMinutes } from "../lib/trip";
+import { useStoredFlags } from "../hooks/useStoredFlags";
 import CheckItem from "./CheckItem";
 import FavoriteButton from "./FavoriteButton";
 
@@ -10,6 +11,8 @@ interface TimelineProps {
   dayLabel?: string;
   /** このタイムラインの日付（"YYYY-MM-DD"）。当日モード（B1）の判定に使う */
   dateISO?: string;
+  /** D2: true の間はお気に入りに登録した予定だけを表示する */
+  favoritesOnly?: boolean;
 }
 
 const STATUS_LABEL: Partial<Record<ScheduleItem["status"], string>> = {
@@ -28,7 +31,15 @@ type NowState = "past" | "now" | "upcoming";
  * - B2: 説明文がある予定は「詳しく見る」で展開できる
  * - .reveal クラスでスクロール連動フェードイン（base.css で定義済み）
  */
-export default function Timeline({ items, dayLabel, dateISO }: TimelineProps) {
+export default function Timeline({ items, dayLabel, dateISO, favoritesOnly }: TimelineProps) {
+  // D2: お気に入り絞り込み（保存値の購読。OFF の間は全件そのまま）
+  const itemIds = useMemo(() => items.map((i) => i.id), [items]);
+  const favFlags = useStoredFlags("favorite", itemIds);
+  const visibleItems = useMemo(
+    () => (favoritesOnly ? items.filter((i) => favFlags[i.id]) : items),
+    [favoritesOnly, items, favFlags]
+  );
+
   const isToday = dateISO !== undefined && dateISO === jstToday();
   const [nowMin, setNowMin] = useState<number>(() => jstNowMinutes());
 
@@ -39,15 +50,15 @@ export default function Timeline({ items, dayLabel, dateISO }: TimelineProps) {
   }, [isToday]);
 
   const ranges = useMemo(() => {
-    return items.map((item, i) => {
+    return visibleItems.map((item, i) => {
       const start = parseTimeToMinutes(item.time);
       const explicitEnd = item.endTime ? parseTimeToMinutes(item.endTime) : null;
       const nextStart =
-        i + 1 < items.length ? parseTimeToMinutes(items[i + 1].time) : null;
+        i + 1 < visibleItems.length ? parseTimeToMinutes(visibleItems[i + 1].time) : null;
       const end = explicitEnd ?? nextStart ?? (start !== null ? start + 60 : null);
       return { start, end };
     });
-  }, [items]);
+  }, [visibleItems]);
 
   // 「ただいま」は重なりがあっても1件だけ（開始が最も遅い＝最も具体的な予定を優先）
   const nowIndex = useMemo(() => {
@@ -72,9 +83,12 @@ export default function Timeline({ items, dayLabel, dateISO }: TimelineProps) {
   return (
     <section className="timeline" aria-label={dayLabel ?? undefined}>
       <h2 className="timeline__day-label">{dayLabel}</h2>
-      {items.map((item, i) => (
+      {visibleItems.map((item, i) => (
         <TimelineCard key={item.id} item={item} nowState={stateOf(i)} />
       ))}
+      {favoritesOnly && visibleItems.length === 0 && (
+        <p className="timeline__empty">この日のお気に入りは、まだありません。</p>
+      )}
     </section>
   );
 }

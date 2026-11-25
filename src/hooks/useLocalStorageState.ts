@@ -3,6 +3,14 @@ import { useCallback, useRef, useState } from "react";
 const STORAGE_NAMESPACE = "disney-invitation";
 const STORAGE_VERSION = "v1";
 
+/**
+ * 同一ウィンドウ内で localStorage の変更を他コンポーネントへ知らせるイベント。
+ * 標準の storage イベントは同一ウィンドウでは発火しないため、
+ * お気に入り件数の集計や持ち物リストの進捗など、別コンポーネントが
+ * 同じ保存値を参照する場面（D1/D2）で使う。detail は { key } のみ。
+ */
+export const STORAGE_CHANGED_EVENT = "disney-invitation:storage-changed";
+
 function buildKey(suffix: string) {
   return `${STORAGE_NAMESPACE}:${STORAGE_VERSION}:${suffix}`;
 }
@@ -74,6 +82,16 @@ export function useLocalStorageState<T>(
         const message = `localStorage write failed for key "${key}"`;
         setStorageError(message);
         onError?.(message);
+      }
+
+      // 同一ウィンドウの他コンポーネントへ変更を通知する（集計表示などのため。
+      // 購読側は localStorage を読み直すので、必ず保存の後に発火させる）
+      try {
+        window.dispatchEvent(
+          new CustomEvent(STORAGE_CHANGED_EVENT, { detail: { key } })
+        );
+      } catch {
+        /* 通知に失敗しても状態更新自体は継続する */
       }
     },
     [key, onError]

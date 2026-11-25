@@ -729,3 +729,292 @@ a.intro__overview-item:focus-visible {
     display: none !important;
   }
 }
+
+/* ============================================================
+   第1弾（2026-11-25 追加）: D1 持ち物 / D2 お気に入り一覧 /
+   D3 時間帯の空気 / D4 パララックス+ケン・バーンズ / D6 印刷拡張
+   ============================================================ */
+
+/* ---- D2: お気に入りバー ---- */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  max-width: 480px;
+  margin: 0 auto var(--space-7);
+  padding: var(--space-3) var(--space-2);
+  border-top: var(--hairline);
+  border-bottom: 1px solid rgba(201, 169, 106, 0.14);
+}
+.filter-bar__count {
+  margin: 0;
+  color: var(--ivory-soft);
+  font-size: var(--fs-350);
+  letter-spacing: var(--ls-wide);
+}
+.filter-bar__count-num {
+  font-family: var(--font-display);
+  color: var(--gold-bright);
+  font-size: var(--fs-450);
+  margin: 0 0.1em;
+}
+.filter-bar__fav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--tap-min);
+  padding: 6px 16px;
+  background: none;
+  border: 1px solid rgba(201, 169, 106, 0.4);
+  border-radius: 999px;
+  color: var(--gold);
+  font-family: var(--font-body);
+  font-size: var(--fs-300);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+.filter-bar__fav-btn:hover {
+  border-color: var(--gold);
+  background: rgba(201, 169, 106, 0.08);
+}
+.filter-bar__fav-btn.is-active {
+  background: rgba(201, 169, 106, 0.16);
+  border-color: var(--gold-bright);
+  color: var(--gold-bright);
+}
+.timeline__empty {
+  color: var(--ivory-faint);
+  font-size: var(--fs-350);
+  letter-spacing: var(--ls-body);
+  padding: var(--space-3) 0 var(--space-5);
+  margin: 0;
+}
+
+/* ---- D1: 持ち物リスト ---- */
+.packing {
+  padding: var(--space-7) 0 var(--space-6);
+  text-align: center;
+}
+.packing__inner {
+  max-width: 540px;
+  margin: 0 auto;
+}
+.packing__title {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  margin: var(--space-4) 0 var(--space-3);
+}
+.packing__lead {
+  color: var(--ivory-soft);
+  font-size: var(--fs-400);
+  line-height: var(--lh-body);
+  margin: 0 auto var(--space-5);
+}
+.packing__progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+.packing__ring {
+  transform: rotate(-90deg);
+}
+.packing__ring-track {
+  fill: none;
+  stroke: rgba(201, 169, 106, 0.22);
+  stroke-width: 3;
+}
+.packing__ring-value {
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+.packing__progress-text {
+  margin: 0;
+  color: var(--ivory-soft);
+  font-size: var(--fs-400);
+  letter-spacing: var(--ls-wide);
+}
+.packing__progress-num {
+  font-family: var(--font-display);
+  font-size: var(--fs-600);
+  color: var(--gold-bright);
+}
+.packing__group {
+  text-align: left;
+  margin-bottom: var(--space-5);
+}
+.packing__group-label {
+  color: var(--gold);
+  font-size: var(--fs-350);
+  font-weight: 500;
+  letter-spacing: var(--ls-wide);
+  margin: 0 0 var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid rgba(201, 169, 106, 0.14);
+}
+.packing__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.packing__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-1);
+  border-bottom: 1px solid rgba(201, 169, 106, 0.08);
+}
+.packing__row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.packing__row-title {
+  color: var(--ivory);
+  font-size: var(--fs-400);
+}
+.packing__row-note {
+  color: var(--ivory-faint);
+  font-size: var(--fs-300);
+}
+
+/* ---- D3: 時間帯の挨拶と空気 ---- */
+.intro__daypart {
+  margin: var(--space-4) auto 0;
+  font-family: var(--font-mincho);
+  color: var(--gold-bright);
+  font-size: var(--fs-350);
+  letter-spacing: 0.14em;
+}
+/* 朝は温かい光、夜はより深い闇を、背景の気配だけで表す（基調色は変えない） */
+.preview-page[data-daypart="morning"] {
+  background: radial-gradient(ellipse 90% 480px at 50% -80px, rgba(232, 201, 138, 0.07), transparent 70%);
+}
+.preview-page[data-daypart="night"] {
+  background: radial-gradient(ellipse 90% 520px at 50% -80px, rgba(7, 13, 31, 0.55), transparent 70%);
+}
+
+/* ---- D4: ヒーローの光のケン・バーンズ（ごくゆっくりしたズーム） ---- */
+.section-hero::before,
+.intro::before {
+  content: "";
+  position: absolute;
+  inset: -12% -20%;
+  background: radial-gradient(ellipse at 50% 38%, rgba(201, 169, 106, 0.09), transparent 62%);
+  pointer-events: none;
+  z-index: 0;
+}
+.section-hero__inner,
+.intro__inner {
+  position: relative;
+  z-index: 1;
+}
+.intro {
+  position: relative;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .section-hero::before,
+  .intro::before {
+    animation: ken-burns-glow 28s ease-in-out infinite alternate;
+  }
+}
+@keyframes ken-burns-glow {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07);
+  }
+}
+
+/* ---- D6: 印刷時のみ表示する要素 ---- */
+.print-only {
+  display: none;
+}
+
+@media print {
+  /* 絞り込みバーは紙には出さない */
+  .filter-bar {
+    display: none !important;
+  }
+
+  /* B2 の説明文は印刷時にすべて展開する */
+  .timeline__desc-wrap {
+    grid-template-rows: 1fr !important;
+  }
+  .timeline__desc-inner {
+    overflow: visible !important;
+  }
+  .timeline__more {
+    display: none !important;
+  }
+
+  /* 持ち物リストは紙でもチェック欄として使えるように */
+  .packing {
+    padding: var(--space-4) 0 !important;
+    break-inside: avoid;
+  }
+  .packing__title,
+  .packing__progress-num {
+    color: #111827 !important;
+  }
+  .packing__lead,
+  .packing__progress-text,
+  .packing__row-title {
+    color: #374151 !important;
+  }
+  .packing__group-label {
+    color: #8c733e !important;
+  }
+  .packing__row-note {
+    color: #6b7280 !important;
+  }
+  .packing__ring-track {
+    stroke: #d4c3a3 !important;
+  }
+  .packing__ring-value {
+    stroke: #8c733e !important;
+  }
+  .check-item {
+    border-color: #b5a075 !important;
+    color: #374151 !important;
+    background: #ffffff !important;
+  }
+
+  /* 出典・URL・QR プレースホルダ */
+  .print-only {
+    display: block;
+  }
+  .print-source {
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid #c9a96a;
+    text-align: center;
+    break-inside: avoid;
+  }
+  .print-source__title {
+    color: #111827 !important;
+    font-size: 11pt;
+    margin: 0 0 4pt;
+  }
+  .print-source__url {
+    color: #374151 !important;
+    font-size: 9pt;
+    word-break: break-all;
+    margin: 0 0 8pt;
+  }
+  .print-source__qr {
+    display: inline-block;
+    border: 1px dashed #b5a075;
+    color: #6b7280 !important;
+    font-size: 8pt;
+    padding: 18pt 12pt;
+    margin: 0;
+  }
+}

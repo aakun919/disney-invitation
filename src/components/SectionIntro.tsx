@@ -1,5 +1,11 @@
 import { useMemo, useRef, useState } from "react";
-import { daysUntilDeparture, tripPhase, type TripPhase } from "../lib/trip";
+import {
+  DAYPART_GREETING,
+  daysUntilDeparture,
+  jstDayPart,
+  tripPhase,
+  type TripPhase,
+} from "../lib/trip";
 import OrnamentGem from "./OrnamentGem";
 
 /**
@@ -51,6 +57,8 @@ const OVERVIEW: { date: string; weekday: string; text: string; target: string }[
 
 export default function SectionIntro() {
   const phase = useMemo(() => tripPhase(), []);
+  // D3: 時間帯の挨拶（朝・夜だけの控えめな一文。フェーズ挨拶と重ねて表示する）
+  const dayPartGreeting = useMemo(() => DAYPART_GREETING[jstDayPart()], []);
   const daysLeft = useMemo(
     () => (phase === "before" || phase === "soon" ? daysUntilDeparture() : null),
     [phase],
@@ -103,6 +111,8 @@ export default function SectionIntro() {
         {found && <p className="intro__found">見つけてくれて、ありがとう</p>}
 
         <p className="intro__lead">{LEADS[phase]}</p>
+
+        {dayPartGreeting && <p className="intro__daypart">{dayPartGreeting}</p>}
 
         {daysLeft !== null && (
           <p className="intro__countdown">
