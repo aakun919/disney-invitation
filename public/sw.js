@@ -48,6 +48,9 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // 大きなメディア（空撮動画・ポスター）は SW のキャッシュ対象外にする（ネットワーク直通）
+  if (url.pathname.startsWith("/media/")) return;
+
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)

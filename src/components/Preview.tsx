@@ -8,6 +8,7 @@ import { useStoredFlags } from "../hooks/useStoredFlags";
 import FilterBar from "./FilterBar";
 import OrnamentGem from "./OrnamentGem";
 import SectionHero from "./SectionHero";
+import SectionAerial from "./SectionAerial";
 import SectionIntro from "./SectionIntro";
 import SectionNight from "./SectionNight";
 import SectionPacking from "./SectionPacking";
@@ -91,6 +92,9 @@ export default function Preview() {
       <main className="container preview-main">
         {/* 旅行全体のイントロダクション */}
         <SectionIntro />
+
+        {/* E1: 舞浜の空撮風動画（イントロ直下・持ち物リストの前） */}
+        <SectionAerial />
 
         {/* D2: お気に入りだけを見る */}
         <FilterBar

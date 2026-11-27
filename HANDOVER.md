@@ -267,3 +267,17 @@ $env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npx.cmd playwright t
 - **フォント再生成**: 新コピーの文字を core 層へ取り込むため `python3 scripts/build-fonts.py` を再実行（woff2 10ファイル＋`fonts.css` が更新）。
 - **検証（VM）**: build / lint / check:content / check:secrets PASS、Playwright E2E **27/27 PASS**（既存21＋新規6: D1 進捗、D2 絞り込み、D3 夜/朝、D5 manifest、D6 印刷を `tests/e2e/phase1.spec.ts` に追加）。dist は 3,111,348 → 3,139,127 bytes（+27,779、+0.9%）で予算内。
 - **コミット**: 本節と実装一式を「feat: 第1弾 D1-D6 を実装（持ち物/お気に入り一覧/時間帯/パララックス/PWA/印刷）」としてコミット（push はしていない）。
+
+---
+
+## 14. 2026-11-27 空撮風動画セクション E1（VM 作業コピーで実施）
+
+ユーザー承認（選択肢B: フル30秒版）を受け、舞浜の空撮風動画を本編へ組み込んだ。素材制作の経緯は `~/workspace/disney-aerial/`（OSM＋地理院航空写真→Blender→AI実写化→動画生成）。**PLATEAU は使っていない**（浦安市には PLATEAU データが存在しないことを確認済み）。
+
+- **素材**: `public/media/maihama-aerial.mp4`（H.264 960×542、30.0秒、8,607,461 bytes、無音）と `public/media/maihama-aerial-poster.jpg`（291,601 bytes、5秒時点のフレーム）。ファイル名は中立名にし、秘密キーワードは一切含めていない（check:secrets PASS）。
+- **配置**: 新コンポーネント `SectionAerial` を `Preview.tsx` の `SectionIntro` 直下・持ち物リストの前に配置。オープニング（封筒セレモニー）は不変更。
+- **挙動**: ミュート自動再生・ループ・playsInline。IntersectionObserver（rootMargin 600px）で画面に近づくまで `<source>` を差し込まない遅延読み込みとし、差し込み後に明示的に load/play する。`prefers-reduced-motion` では動画を出さずポスター静止画のみ表示。印刷時はセクション自体を非表示。
+- **帰属表示**: セクション下部に小さく「3Dベースデータ: © OpenStreetMap contributors（ODbL）／国土地理院の空中写真をもとに作成したAI生成映像です」を明記。映像は地理を再配置したイメージ映像であり、正確な空撮ではない（サイト上でも「空撮風イメージ映像」と表現）。
+- **PWA**: `public/sw.js` の fetch ハンドラで `/media/` をキャッシュ対象外に変更（ネットワーク直通）。アプリシェルの先読みにも含めていないため、8.6MB の動画が SW に先読み・保存されることはない。キャッシュ名は既存 E2E（D5）の期待値に合わせ `disney-invitation-v1` のまま据え置いた。
+- **検証（VM）**: build / lint / check:content / check:secrets PASS、Playwright E2E **29/29 PASS**（既存27＋新規2: E1 遅延読み込み・属性確認、E1 reduced-motion でポスター表示、を `tests/e2e/phase1.spec.ts` に追加）。実測でも動画の自動再生を確認（readyState 4・再生中、モバイル/デスクトップ両方でスクリーンショット確認済み）。
+- **dist**: 3,139,127 → 12,041,211 bytes（+8,902,084。内訳はほぼ動画＋ポスター分）。ページ本体（JS/CSS）の増加は約3KBのみで、動画は遅延読み込みのため初期表示への影響はない。

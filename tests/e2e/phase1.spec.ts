@@ -152,3 +152,47 @@ test("D6: 印刷時のみ出典（URL）が現れ、操作UIが隠れる", async
   await page.emulateMedia({ media: "screen" });
   await expect(source).toBeHidden();
 });
+
+test("E1: 空撮セクションがあり、動画が遅延読み込みされる（390px）", async ({ page }) => {
+  await reachPreview(page, { width: 390, height: 844 });
+
+  const aerial = page.locator("#aerial");
+  await expect(aerial.getByRole("heading", { name: "空から眺める、舞浜" })).toBeVisible();
+  await expect(aerial.locator(".aerial__credit")).toContainText("OpenStreetMap");
+
+  const video = aerial.locator("video");
+  await expect(video).toHaveCount(1);
+  await expect(video).toHaveAttribute("poster", "/media/maihama-aerial-poster.jpg");
+  await expect
+    .poll(() => video.evaluate((v) => (v as HTMLVideoElement).muted))
+    .toBe(true);
+  await expect
+    .poll(() => video.evaluate((v) => (v as HTMLVideoElement).playsInline))
+    .toBe(true);
+  await expect
+    .poll(() => video.evaluate((v) => (v as HTMLVideoElement).loop))
+    .toBe(true);
+
+  // 画面に近づくまで source は差し込まれない（遅延読み込み）。スクロールで差し込まれる
+  await aerial.scrollIntoViewIfNeeded();
+  await expect
+    .poll(() =>
+      video.evaluate(
+        (v) => v.querySelector("source")?.getAttribute("src") ?? ""
+      )
+    )
+    .toBe("/media/maihama-aerial.mp4");
+});
+
+test("E1: reduced-motion では動画ではなくポスター画像になる", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await reachPreview(page, { width: 390, height: 844 });
+
+  const aerial = page.locator("#aerial");
+  await expect(aerial.locator("video")).toHaveCount(0);
+  await expect(aerial.locator("img.aerial__media")).toHaveCount(1);
+  await expect(aerial.locator("img.aerial__media")).toHaveAttribute(
+    "src",
+    "/media/maihama-aerial-poster.jpg"
+  );
+});
