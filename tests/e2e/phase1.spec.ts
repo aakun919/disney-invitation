@@ -196,3 +196,46 @@ test("E1: reduced-motion では動画ではなくポスター画像になる", a
     "/media/maihama-aerial-poster.jpg"
   );
 });
+
+test("E2: アーチの映像セクションがあり、動画が遅延読み込みされる（390px）", async ({ page }) => {
+  await reachPreview(page, { width: 390, height: 844 });
+
+  const entrance = page.locator("#entrance");
+  await expect(entrance.getByRole("heading", { name: "夕暮れのアーチをくぐって" })).toBeVisible();
+
+  const video = entrance.locator("video");
+  await expect(video).toHaveCount(1);
+  await expect(video).toHaveAttribute("poster", "/media/entrance-teaser-poster.jpg");
+  await expect
+    .poll(() => video.evaluate((v) => (v as HTMLVideoElement).muted))
+    .toBe(true);
+  await expect
+    .poll(() => video.evaluate((v) => (v as HTMLVideoElement).playsInline))
+    .toBe(true);
+  await expect
+    .poll(() => video.evaluate((v) => (v as HTMLVideoElement).loop))
+    .toBe(true);
+
+  // 画面に近づくまで source は差し込まれない（遅延読み込み）。スクロールで差し込まれる
+  await entrance.scrollIntoViewIfNeeded();
+  await expect
+    .poll(() =>
+      video.evaluate(
+        (v) => v.querySelector("source")?.getAttribute("src") ?? ""
+      )
+    )
+    .toBe("/media/entrance-teaser.mp4");
+});
+
+test("E2: reduced-motion では動画ではなくポスター画像になる", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await reachPreview(page, { width: 390, height: 844 });
+
+  const entrance = page.locator("#entrance");
+  await expect(entrance.locator("video")).toHaveCount(0);
+  await expect(entrance.locator("img.entrance__media")).toHaveCount(1);
+  await expect(entrance.locator("img.entrance__media")).toHaveAttribute(
+    "src",
+    "/media/entrance-teaser-poster.jpg"
+  );
+});

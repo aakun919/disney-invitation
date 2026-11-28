@@ -219,6 +219,7 @@
   .starfield,
   .opening,
   .aerial,
+  .entrance,
   .timeline__actions {
     display: none !important;
   }
@@ -932,6 +933,49 @@ a.intro__overview-item:focus-visible {
   color: var(--ivory-faint);
   font-size: var(--fs-300);
   line-height: var(--lh-body);
+}
+
+/* ---- E2: 夕暮れのアーチの映像 ---- */
+.entrance {
+  padding: var(--space-7) 0 var(--space-6);
+  text-align: center;
+}
+.entrance__inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.entrance__title {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  margin: var(--space-4) 0 var(--space-3);
+}
+.entrance__lead {
+  color: var(--ivory-soft);
+  font-size: var(--fs-400);
+  line-height: var(--lh-body);
+  margin: 0 auto var(--space-5);
+}
+.entrance__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0a1128;
+  border: 1px solid rgba(201, 169, 106, 0.35);
+  outline: 1px solid rgba(201, 169, 106, 0.12);
+  outline-offset: 5px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+.entrance__media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.entrance__caption {
+  margin: var(--space-4) 0 0;
+  font-family: var(--font-mincho);
+  color: var(--gold-bright);
+  font-size: var(--fs-350);
+  letter-spacing: 0.14em;
 }
 
 /* ---- D3: 時間帯の挨拶と空気 ---- */

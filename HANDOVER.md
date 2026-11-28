@@ -281,3 +281,16 @@ $env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npx.cmd playwright t
 - **PWA**: `public/sw.js` の fetch ハンドラで `/media/` をキャッシュ対象外に変更（ネットワーク直通）。アプリシェルの先読みにも含めていないため、8.6MB の動画が SW に先読み・保存されることはない。キャッシュ名は既存 E2E（D5）の期待値に合わせ `disney-invitation-v1` のまま据え置いた。
 - **検証（VM）**: build / lint / check:content / check:secrets PASS、Playwright E2E **29/29 PASS**（既存27＋新規2: E1 遅延読み込み・属性確認、E1 reduced-motion でポスター表示、を `tests/e2e/phase1.spec.ts` に追加）。実測でも動画の自動再生を確認（readyState 4・再生中、モバイル/デスクトップ両方でスクリーンショット確認済み）。
 - **dist**: 3,139,127 → 12,041,211 bytes（+8,902,084。内訳はほぼ動画＋ポスター分）。ページ本体（JS/CSS）の増加は約3KBのみで、動画は遅延読み込みのため初期表示への影響はない。
+
+---
+
+## 15. 2026-11-28 夕暮れのアーチの映像セクション E2（VM 作業コピーで実施）
+
+ユーザーの選択（サイトに載せる動画は E1 の空撮と本セクションのみ）を受け、夕暮れの石造りアーチをくぐる短い映像を本編の締めくくりに組み込んだ。映像は地中海風の旧市街を思わせる汎用的な情景のみで、看板・文字・ロゴ等の特定要素は一切含まない（フレーム検証済み）。ファイル名・文言・alt・コミット文のいずれにも固有名詞を用いていない（check:secrets PASS）。
+
+- **素材**: `public/media/entrance-teaser.mp4`（H.264 1248×704、10.0秒、6,190,605 bytes、無音。映像自体が基調色ネイビー #070d1f へフェードイン/アウトする）と `public/media/entrance-teaser-poster.jpg`（119,441 bytes、4秒時点のフレーム）。
+- **配置**: 新コンポーネント `SectionEntrance` を `Preview.tsx` の2日目セクション直後、エピローグ/フッターの前に配置。本編の旅程を読み終えた後に静かな余韻として置く位置づけ。オープニングと E1（SectionAerial）は不変更。
+- **挙動**: E1 と同一方式 — ミュート自動再生・ループ・playsInline、IntersectionObserver（rootMargin 600px）で画面に近づくまで `<source>` を差し込まない遅延読み込み、差し込み後に明示的に load/play。`prefers-reduced-motion` では動画を出さずポスター静止画のみ表示。印刷時はセクション自体を非表示。
+- **PWA**: `public/sw.js` は `/media/` 配下を一括でキャッシュ対象外にしているため（§14）、新素材も自動的に同ルールの対象。追加変更は不要だった。
+- **検証（VM）**: build / lint / check:content --strict / check:secrets PASS、Playwright E2E **31/31 PASS**（既存29＋新規2: E2 遅延読み込み・属性確認、E2 reduced-motion でポスター表示、を `tests/e2e/phase1.spec.ts` に追加）。実測でも動画の自動再生を確認（readyState 4・再生中、モバイル/デスクトップ両方でスクリーンショット確認済み）。
+- **dist**: 12,041,211 → 18,353,935 bytes（+6,312,724。内訳はほぼ動画＋ポスター分）。

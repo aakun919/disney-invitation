@@ -9,6 +9,7 @@ import FilterBar from "./FilterBar";
 import OrnamentGem from "./OrnamentGem";
 import SectionHero from "./SectionHero";
 import SectionAerial from "./SectionAerial";
+import SectionEntrance from "./SectionEntrance";
 import SectionIntro from "./SectionIntro";
 import SectionNight from "./SectionNight";
 import SectionPacking from "./SectionPacking";
@@ -135,6 +136,9 @@ export default function Preview() {
           />
           <Timeline items={DAY2.items} dayLabel="2日目" dateISO={DAY2.dateISO} favoritesOnly={favoritesOnly} />
         </section>
+
+        {/* E2: 夕暮れのアーチの映像（本編の締めくくりに置く静かな余韻） */}
+        <SectionEntrance />
 
         {/* C2: エピローグ（旅の後に開いたときだけ現れる） */}
         {phase === "after" && (
