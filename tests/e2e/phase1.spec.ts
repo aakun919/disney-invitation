@@ -96,7 +96,7 @@ test("D2: お気に入りだけ表示で絞り込める（390px）", async ({ pa
 
   await expect(page.getByRole("heading", { name: "出発・集合" }).first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "昼食" })).toHaveCount(0);
-  await expect(page.getByText("この日のお気に入りは、まだありません。")).toHaveCount(2);
+  await expect(page.getByText("この日のお気に入りは、まだありません。")).toHaveCount(3);
 
   // OFF に戻すと全件表示に戻る
   await toggle.click();

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { DEPARTURE } from "../data/departure";
 import { DAY1 } from "../data/day1";
 import { NIGHT } from "../data/night";
 import { DAY2 } from "../data/day2";
@@ -106,6 +107,18 @@ export default function Preview() {
 
         {/* D1: 持ち物リスト（出発前の準備として、日程の前に置く） */}
         <SectionPacking />
+
+        {/* 出発の日（3/12: 名古屋 → 東京） */}
+        <section className="preview__section day-section" aria-label="出発の日" id="departure">
+          <SectionHero
+            title={DEPARTURE.dateLabel}
+            lead={DEPARTURE.intro}
+            parkName={DEPARTURE.parkName}
+            latinLabel={DEPARTURE.parkLatin}
+            dateText={DEPARTURE.dateText}
+          />
+          <Timeline items={DEPARTURE.items} dayLabel="出発の日" dateISO={DEPARTURE.dateISO} favoritesOnly={favoritesOnly} />
+        </section>
 
         {/* 1日目 */}
         <section className="preview__section day-section" aria-label="1日目" id="day1">

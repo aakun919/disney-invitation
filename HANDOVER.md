@@ -294,3 +294,14 @@ $env:PATH = "C:\Users\USER\node\PFiles64\nodejs;$env:PATH"; npx.cmd playwright t
 - **PWA**: `public/sw.js` は `/media/` 配下を一括でキャッシュ対象外にしているため（§14）、新素材も自動的に同ルールの対象。追加変更は不要だった。
 - **検証（VM）**: build / lint / check:content --strict / check:secrets PASS、Playwright E2E **31/31 PASS**（既存29＋新規2: E2 遅延読み込み・属性確認、E2 reduced-motion でポスター表示、を `tests/e2e/phase1.spec.ts` に追加）。実測でも動画の自動再生を確認（readyState 4・再生中、モバイル/デスクトップ両方でスクリーンショット確認済み）。
 - **dist**: 12,041,211 → 18,353,935 bytes（+6,312,724。内訳はほぼ動画＋ポスター分）。
+
+## 16. 2026-11-28 実データ第1弾（往路・宿泊・復路）
+
+EXダイナミックパックの予約確定内容を反映した（パーク内の予定は未確定のためサンプルのまま）。
+
+- 新規 `src/data/departure.ts`（出発の日 2027-03-12）: のぞみ46号 名古屋19:20→東京20:57（confirmed）、ホテルチェックイン 22:00 到着予定・相鉄グランドフレッサ東京ベイ有明・禁煙ダブル（confirmed）
+- Preview に「出発の日」セクションを追加（id="departure"、イントロの概要リンクの飛び先を従来の facts からこのセクションへ変更）
+- SectionIntro: FACTS の出発を「名古屋 19:20発（のぞみ46号）」に、概要 3.12 の文言を「のぞみ46号で、名古屋から東京へ」に更新
+- DAY2: 退園を 18:00「退園・東京駅へ」（tentative）に変更し、のぞみ87号 東京19:39→名古屋21:17（confirmed）を追加
+- 3/13 夜の宿泊については秘密情報の境界を厳守し、サイト内に具体名・示唆を一切入れていない
+- フォント再生成済み（build-fonts.py）。検証: build / lint / check:content / check:secrets PASS、E2E 31/31 PASS（D2 テストの空表示件数を新セクション分 2→3 に更新）

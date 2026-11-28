@@ -45,12 +45,12 @@ const COUNTDOWN_TEXT: Partial<Record<TripPhase, string>> = {
 const FACTS: { term: string; value: string }[] = [
   { term: "日程", value: "2027年3月12日（金）〜 14日（日）" },
   { term: "行き先", value: "東京ディズニーリゾート" },
-  { term: "出発", value: "名古屋（12日 夕方）" },
+  { term: "出発", value: "名古屋 19:20発（のぞみ46号）" },
   { term: "人数", value: "2名" },
 ];
 
 const OVERVIEW: { date: string; weekday: string; text: string; target: string }[] = [
-  { date: "3.12", weekday: "FRI", text: "夕方、名古屋を出発して東京へ", target: "#departure" },
+  { date: "3.12", weekday: "FRI", text: "のぞみ46号で、名古屋から東京へ", target: "#departure" },
   { date: "3.13", weekday: "SAT", text: "東京ディズニーランドで過ごす一日", target: "#day1" },
   { date: "3.14", weekday: "SUN", text: "東京ディズニーシー、夜に名古屋へ", target: "#day2" },
 ];
@@ -123,7 +123,7 @@ export default function SectionIntro() {
           <p className="intro__countdown">{COUNTDOWN_TEXT[phase]}</p>
         )}
 
-        <dl className="intro__facts" id="departure">
+        <dl className="intro__facts">
           {FACTS.map((f) => (
             <div className="intro__fact" key={f.term}>
               <dt className="intro__fact-term">{f.term}</dt>
